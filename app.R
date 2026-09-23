@@ -90,7 +90,7 @@ ui <- navbarPage(
     .blue   { background-color: #6a1b9a; }
     .green  { background-color: #5cd6c7; }
     .orange { background-color: #f77333; }
-    .yellow { background-color: #f9a825; color: #000; }
+    .yellow { background-color: #f9a825; }
     .purple { background-color: #004c91; }
 
     /* =========================
@@ -134,29 +134,25 @@ ui <- navbarPage(
       sidebarPanel(
         
         selectInput(
-          "filtro_ciclo",
-          "Ciclo:",
-          choices = c("Todos", unique(Baseline_Raizes$Ciclo))
-        ),
-        
-        selectInput(
           "filtro_tipo_avaliacao",
           "Avaliação:",
-          choices = c("Todos", unique(Baseline_Raizes$Tipo_Avaliacao))
+          choices = c("Todos", sort(unique(Baseline_Raizes$Tipo_Avaliacao))),
+          selected = "Todos"
         ),
         
         selectInput(
           "filtro_local",
-          "Local:",
-          choices = c("Todos", unique(Baseline_Raizes$Local_Entrevista))
+          "Distrito/Localidade:",
+          choices = c("Todos", sort(unique(Baseline_Raizes$Distrito_Localidade))),
+          selected = "Todos"
         ),
         
         selectInput(
           "filtro_comunidade",
           "Comunidade:",
-          choices = c("Todos", unique(Baseline_Raizes$Comunidade))
+          choices = c("Todos", sort(unique(Baseline_Raizes$Comunidade))),
+          selected = "Todos"
         )
-        
       ),
       
       mainPanel(
@@ -167,57 +163,279 @@ ui <- navbarPage(
           
           tabPanel("Perfil",
                    fluidRow(
-                     column(6, plotlyOutput("grafico_sexo")),
-                     column(6, plotlyOutput("grafico_estado_civil"))
+                     column(6,
+                            div(
+                              style="background-color:#f5f3f4; padding:12px; border-radius:6px; margin-bottom:20px;",
+                              uiOutput("leitura_sexo")
+                            ),
+                            plotlyOutput("grafico_sexo")),
+                     column(6,
+                            div(
+                              style="background-color:#f5f3f4; padding:12px; border-radius:6px; margin-bottom:20px;",
+                              uiOutput("leitura_estado_civil")
+                            ),
+                            plotlyOutput("grafico_estado_civil"))
+                   ),
+                   br(),
+                   fluidRow(
+                     column(6, 
+                            div(
+                              style="background-color:#f5f3f4; padding:12px; border-radius:6px; margin-bottom:20px;",
+                              uiOutput("leitura_actividade_mar")
+                            ), 
+                            plotlyOutput("grafico_actividade_mar")),
+                     
+                     column(6, 
+                            div(
+                              style="background-color:#f5f3f4; padding:12px; border-radius:6px; margin-bottom:20px;",
+                              uiOutput("leitura_actividade_mar_detalhe")
+                            ),
+                            plotlyOutput("grafico_actividade_mar_detalhe"))
                    )
           ),
           
           tabPanel("Tomada de Decisão",
+                   
                    fluidRow(
-                     column(12, plotlyOutput("grafico_decisao_geral", height = "650px"))
-                     ),
-                   br(),
+                     column(
+                       12,
+                       
+                       div(
+                         style = "
+        background-color:#eef4fb;
+        border-left:5px solid #8054A2;
+        padding:15px;
+        border-radius:6px;
+        margin-bottom:25px;
+      ",
+                         
+                         tags$h4(
+                           style = "margin-top:0; color:#8054A2;",
+                           "AGÊNCIA: TOMANDO DECISÕES"
+                         ),
+                         tags$p(
+                           "Abaixo, temos várias frases sobre a tomada de decisões. ",
+                           "Nós gostaríamos de saber o quanto que você concorda com as frases a seguir, ",
+                           "pensando em seus relacionamentos. Vamos usar uma escala de 1 até 5."
+                         ),
+                         
+                         tags$p(
+                           strong("Use a escala: "),
+                           "1 = Discordo totalmente, ",
+                           "2 = Discordo parcialmente, ",
+                           "3 = Não concordo nem discordo, ",
+                           "4 = Concordo parcialmente, ",
+                           "5 = Concordo totalmente."
+                         ),
+                         
+                         tags$p(
+                           "Não existem respostas certas ou erradas e pedimos que responda ",
+                           "de acordo com seus sentimentos."
+                         )
+                       )
+                     )
+                   ),
+                   # fluidRow(
+                   #   column(12, plotlyOutput("grafico_decisao_geral", height = "650px"))
+                   #   ),
+                   # br(),
                    fluidRow(
-                     column(6, plotlyOutput("grafico_decisao_economica")),
-                     column(6, plotlyOutput("grafico_Decisao_Educacao"))
+                     column(6,
+                            div(
+                              style="background-color:#f5f3f4; padding:12px; border-radius:6px; margin-bottom:20px;",
+                              uiOutput("leitura_poder_decidir")
+                            ),
+                            plotlyOutput("grafico_poder_decidir_economica")),
+                     column(6, 
+                            div(
+                              style="background-color:#f5f3f4; padding:12px; border-radius:6px; margin-bottom:20px;",
+                              uiOutput("leitura_poder_educacao")
+                            ),
+                            plotlyOutput("grafico_poder_educacao"))
                    ),
                    br(),
                    fluidRow(
-                     column(6, plotlyOutput("grafico_Decisao_Futuro_Profissional")),
-                     column(6, plotlyOutput("grafico_Decisao_Movimentos"))
+                     column(6, 
+                            div(
+                              style="background-color:#f5f3f4; padding:12px; border-radius:6px; margin-bottom:20px;",
+                              uiOutput("leitura_decide_futuro_profissional")
+                            ),
+                            plotlyOutput("grafico_decide_futuro_profissional")),
+                     column(6,
+                            div(
+                              style="background-color:#f5f3f4; padding:12px; border-radius:6px; margin-bottom:20px;",
+                              uiOutput("leitura_decide_movimentos")
+                            ),
+                            plotlyOutput("grafico_decide_movimentos"))
                    ),
                    br(),
                    fluidRow(
-                     column(6, plotlyOutput("grafico_Decisao_Grandes_Despesas")),
-                     column(6, plotlyOutput("grafico_Decisao_Pequenas_Despesas"))
+                     column(6,
+                            div(
+                              style="background-color:#f5f3f4; padding:12px; border-radius:6px; margin-bottom:20px;",
+                              uiOutput("leitura_decide_grandes_despesas")
+                            ),
+                            plotlyOutput("grafico_decide_grandes_despesas")),
+                     column(6,
+                            div(
+                              style="background-color:#f5f3f4; padding:12px; border-radius:6px; margin-bottom:20px;",
+                              uiOutput("leitura_decide_pequenas_despesas")
+                            ),
+                            plotlyOutput("grafico_decide_pequenas_despesas"))
                    )
           ),
                    
           tabPanel("Normas Sociais",
+                   
                    fluidRow(
-                     column(12, plotlyOutput("grafico_Violencia_Domestica_geral", height = "650px"))
+                     column(
+                       12,
+                       
+                       div(
+                         style = "
+        background-color:#eef4fb;
+        border-left:5px solid #8054A2;
+        padding:15px;
+        border-radius:6px;
+        margin-bottom:25px;
+      ",
+                         
+                         tags$h4(
+                           style = "margin-top:0; color:#8054A2;",
+                           "AGÊNCIA – NORMAS SOCIAIS"
+                         ),
+                         
+                         tags$p(
+                           "Nesta secção, temos várias perguntas sobre as normas sociais ",
+                           "e sobre as perceções relacionadas com os papéis de mulheres e homens ",
+                           "na comunidade."
+                         ),
+                         
+                         tags$p(
+                           "Queremos saber como você percebe estas situações na sua comunidade, ",
+                           "incluindo questões relacionadas com liderança, tomada de decisões, ",
+                           "respeito e relações entre mulheres e homens."
+                         ),
+                         
+                         tags$p(
+                           strong("Não existem respostas certas ou erradas. "),
+                           "Responda de acordo com a sua opinião, experiência e percepção ",
+                           "sobre o que acontece na sua comunidade."
+                         )
+                       )
+                     )
+                   ),
+                   # fluidRow(
+                   #   column(12, plotlyOutput("grafico_Violencia_Domestica_geral", height = "650px"))
+                   # ),
+                   br(),
+                   fluidRow(
+                     column(6, 
+                            div(
+                              style="background-color:#f5f3f4; padding:12px; border-radius:6px; margin-bottom:20px;",
+                              uiOutput("leitura_deseja_lideranca")
+                            ),
+                            plotlyOutput("grafico_deseja_lideranca")),
+                     column(6, 
+                            div(
+                              style="background-color:#f5f3f4; padding:12px; border-radius:6px; margin-bottom:20px;",
+                              uiOutput("leitura_mulheres_lideranca")
+                            ),
+                            plotlyOutput("grafico_mulheres_lideranca"))
                    ),
                    br(),
                    fluidRow(
-                     column(6, plotlyOutput("grafico_Violencia_Domestica_Aceitavel")),
-                     column(6, plotlyOutput("grafico_Violencia_Assunto_Privado"))
+                     column(6, 
+                            div(
+                              style="background-color:#f5f3f4; padding:12px; border-radius:6px; margin-bottom:20px;",
+                              uiOutput("leitura_aprovaria_mulher_liderar")
+                            ),
+                            plotlyOutput("grafico_aprovaria_mulher_liderar")),
+                     column(6, 
+                            div(
+                              style="background-color:#f5f3f4; padding:12px; border-radius:6px; margin-bottom:20px;",
+                              uiOutput("leitura_quantas_aprovariam_mulher")
+                            ),
+                            plotlyOutput("grafico_quantas_aprovariam_mulher"))  
                    ),
                    br(),
                    fluidRow(
-                     column(6, plotlyOutput("grafico_Gostaria_Ser_Lider")),
-                     column(6, plotlyOutput("grafico_Mulheres_Lideranca_Frequencia"))
-                   ),
-                   br(),
-                   fluidRow(
-                     column(6, plotlyOutput("grafico_Aprovacao_Lideranca_Mulher")),
-                     column(6, plotlyOutput("grafico_Percepcao_Aprovacao_Comunidade"))
+                     column(6, 
+                            div(
+                              style="background-color:#f5f3f4; padding:12px; border-radius:6px; margin-bottom:20px;",
+                              uiOutput("leitura_mulher_aceitar_violencia")
+                            ),
+                            plotlyOutput("grafico_mulher_aceitar_violencia")),
+                     column(6, 
+                            div(
+                              style="background-color:#f5f3f4; padding:12px; border-radius:6px; margin-bottom:20px;",
+                              uiOutput("leitura_homem_bate_mulher")
+                            ),
+                            plotlyOutput("grafico_homem_bate_mulher"))
                    )
           ),
           
-          tabPanel("Auto-Eficácia (Voice)",
+          tabPanel("Capital Social e Redes",
                    fluidRow(
-                     column(6, plotlyOutput("grafico_voice")),
-                     column(6, plotlyOutput("grafico_a"))
+                     column(
+                       12,
+                       
+                       div(
+                         style = "
+        background-color:#eef4fb;
+        border-left:5px solid #8054A2;
+        padding:15px;
+        border-radius:6px;
+        margin-bottom:25px;
+      ",
+                         
+                         tags$h4(
+                           style = "margin-top:0; color:#8054A2;",
+                           "CAPITAL SOCIAL E REDES"
+                         ),
+                         
+                         tags$p(
+                           "Abaixo, temos várias frases sobre a sua relação com outras pessoas ",
+                           "e sobre o apoio que recebe das pessoas próximas."
+                         ),
+                         
+                         tags$p(
+                           "Queremos saber como você percebe as suas relações com amigos, ",
+                           "familiares e outras pessoas da sua comunidade, incluindo as pessoas ",
+                           "com quem pode conversar, partilhar problemas e receber apoio."
+                         ),
+                         
+                         tags$p(
+                           strong("Não existem respostas certas ou erradas. "),
+                           "Responda de acordo com os seus sentimentos, experiências ",
+                           "e relações com as pessoas à sua volta."
+                         ),
+                         
+                         tags$p(
+                           strong("Para as frases de concordância, use a escala: "),
+                           "1 = Discordo totalmente, ",
+                           "2 = Discordo parcialmente, ",
+                           "3 = Não concordo, nem discordo, ",
+                           "4 = Concordo parcialmente, ",
+                           "5 = Concordo totalmente."
+                         )
+                       )
+                     )
+                   ),
+                   
+                   fluidRow(
+                     column(6, 
+                            div(
+                              style="background-color:#f5f3f4; padding:12px; border-radius:6px; margin-bottom:20px;",
+                              uiOutput("leitura_pessoas_falar_sozinha")
+                            ),
+                            plotlyOutput("grafico_pessoas_falar_sozinha")),
+                     column(6, 
+                            div(
+                              style="background-color:#f5f3f4; padding:12px; border-radius:6px; margin-bottom:20px;",
+                              uiOutput("leitura_pessoas_discutir_problemas")
+                            ),
+                            plotlyOutput("grafico_pessoas_discutir_problemas"))
                    )
           ),
           
@@ -233,93 +451,7 @@ ui <- navbarPage(
       )
     )
   ),
-  
-  # ========================================================
-  # 2. MONITORIA
-  # ========================================================
-  tabPanel(
-    "Monitoria",
-    
-    tabsetPanel(
-      tabPanel(
-        tagList(icon("users"), "Presenças Gerais"),
-        
-        sidebarLayout(
-          sidebarPanel(
-            selectInput(
-              "distritoInput_namp_pi",
-              "Distrito:",
-              choices = c("TODOS", unique(Presencas_Nexus$Distrito))
-            ),
-            selectInput(
-              "comunidadeInput_namp_pi",
-              "Comunidade:",
-              choices = c("TODAS", unique(Presencas_Nexus$Comunidade))
-            )
-          ),
-          
-          mainPanel(
-            uiOutput("texto_participacao_sessoes"),
-            br(),
-            # downloadButton("baixarBasePresencasExcel", "Baixar Presenças"),
-            withSpinner(plotlyOutput("graficoParticipacaoGlobal", height = "500px")),
-            br(), br(),
-            
-            uiOutput("texto_participacao_sexo"),
-            br(),
-            withSpinner(plotlyOutput("graficoParticipacaoSexo", height = "400px"))
-          )
-        )
-      ),
-      
-      tabPanel(
-        tagList(icon("user-check"), "Presenças Individuais"),
-        
-        sidebarLayout(
-          sidebarPanel(
-            selectInput(
-              "distritoInput_",
-              "Distrito:",
-              choices = c("TODOS", unique(Presencas_Nexus$Distrito))
-            ),
-            selectInput(
-              "comunidadeAcompanhamento",
-              "Comunidade:",
-              choices = c("TODAS", unique(Presencas_Nexus$Comunidade))
-            ),
-            selectInput(
-              "facilitadorInput",
-              "Facilitador/a:",
-              choices = c("TODOS", unique(Presencas_Nexus$Facilitadores))
-            )
-          ),
-          
-          mainPanel(
-            fluidRow(
-              column(
-                6,
-                uiOutput("texto_grafico_N"),
-                br(),
-                plotlyOutput("grafico_N")
-              ),
-              column(
-                6,
-                uiOutput("texto_situacao_interpretacao"),
-                br(),
-                plotlyOutput("grafico_situacao_C")
-              )
-            ),
-            br(),
-            uiOutput("pontosPresenca"),
-            br(),
-            uiOutput("texto_presencas"),
-            br(),
-            dataTableOutput("tabelaPresencas")
-          )
-        )
-      )
-    )
-  ),
+
   
   # ========================================================
   # 3. OCEAN GUARD
@@ -444,54 +576,222 @@ ui <- navbarPage(
 # SERVER
 # ==========================================================
 server <- function(input, output, session) {
-  
+
   # ==========================
-  # DADOS FILTRADOS (BASE)
+  # DADOS FILTRADOS
   # ==========================
   dados <- reactive({
     
     df <- Baseline_Raizes
     
-    if (input$filtro_ciclo != "Todos") {
-      df <- df %>% filter(Ciclo == input$filtro_ciclo)
-    }
-    
     if (input$filtro_tipo_avaliacao != "Todos") {
-      df <- df %>% filter(Tipo_Avaliacao == input$filtro_tipo_avaliacao)
+      df <- df %>%
+        filter(Tipo_Avaliacao == input$filtro_tipo_avaliacao)
     }
     
     if (input$filtro_local != "Todos") {
-      df <- df %>% filter(Local_Entrevista == input$filtro_local)
+      df <- df %>%
+        filter(Distrito_Localidade == input$filtro_local)
     }
     
     if (input$filtro_comunidade != "Todos") {
-      df <- df %>% filter(Comunidade == input$filtro_comunidade)
+      df <- df %>%
+        filter(Comunidade == input$filtro_comunidade)
     }
     
     df
   })
   
   # ========================================================
-  # KPI AGENCIA
+  # ATUALIZAR COMUNIDADES DE ACORDO COM O DISTRITO/LOCALIDADE
+  # ========================================================
+  observeEvent(input$filtro_local, {
+    
+    if (input$filtro_local == "Todos") {
+      
+      comunidades <- Baseline_Raizes %>%
+        pull(Comunidade) %>%
+        unique() %>%
+        sort()
+      
+    } else {
+      
+      comunidades <- Baseline_Raizes %>%
+        filter(Distrito_Localidade == input$filtro_local) %>%
+        pull(Comunidade) %>%
+        unique() %>%
+        sort()
+    }
+    
+    updateSelectInput(
+      session,
+      "filtro_comunidade",
+      choices = c("Todos", comunidades),
+      selected = "Todos"
+    )
+  })
+  
+  # ========================================================
+  # KPI DINÂMICOS
   # ========================================================
   output$kpi_agencia <- renderUI({
     
     df <- dados()
     
-    div(class = "value-box-container",
+    # Lista dos distritos/localidades
+    locais <- sort(unique(Baseline_Raizes$Distrito_Localidade))
+    
+    # Remover NA
+    locais <- locais[!is.na(locais)]
+    
+    # ======================================================
+    # TOTAL DE PARTICIPANTES
+    # ======================================================
+    total_participantes <- nrow(df)
+    
+    
+    # ======================================================
+    # SE "TODOS" ESTIVER SELECIONADO
+    # ======================================================
+    if (input$filtro_local == "Todos") {
+      
+      # Totais por distrito/localidade
+      totais_local <- Baseline_Raizes %>%
+        group_by(Distrito_Localidade) %>%
+        summarise(
+          Total = n(),
+          .groups = "drop"
+        ) %>%
+        filter(!is.na(Distrito_Localidade)) %>%
+        arrange(Distrito_Localidade)
+      
+      # Primeiro local
+      total_1 <- if (nrow(totais_local) >= 1) {
+        totais_local$Total[1]
+      } else {
+        0
+      }
+      
+      nome_1 <- if (nrow(totais_local) >= 1) {
+        totais_local$Distrito_Localidade[1]
+      } else {
+        "Local 1"
+      }
+      
+      # Segundo local
+      total_2 <- if (nrow(totais_local) >= 2) {
+        totais_local$Total[2]
+      } else {
+        0
+      }
+      
+      nome_2 <- if (nrow(totais_local) >= 2) {
+        totais_local$Distrito_Localidade[2]
+      } else {
+        "Local 2"
+      }
+      
+      div(
+        class = "value-box-container",
         
-        div(class = "value-box blue",
-            span(class = "value-number", nrow(df)),
-            span(class = "value-title", "Participantes")),
+        div(
+          class = "value-box green",
+          span(
+            class = "value-number",
+            total_participantes
+          ),
+          span(
+            class = "value-title",
+            "Participantes"
+          )
+        ),
         
-        div(class = "value-box green",
-            span(class = "value-number", n_distinct(df$Ciclo)),
-            span(class = "value-title", "Ciclos")),
+        div(
+          class = "value-box purple",
+          span(
+            class = "value-number",
+            total_1
+          ),
+          span(
+            class = "value-title",
+            nome_1
+          )
+        ),
         
-        div(class = "value-box orange",
-            span(class = "value-number", nrow(df)),
-            span(class = "value-title", "Registos"))
-    )
+        div(
+          class = "value-box yellow",
+          span(
+            class = "value-number",
+            total_2
+          ),
+          span(
+            class = "value-title",
+            nome_2
+          )
+        )
+      )
+      
+    } else {
+      
+      # ====================================================
+      # DISTRITO/LOCALIDADE SELECIONADO
+      # ====================================================
+      
+      feminino <- df %>%
+        filter(
+          !is.na(Sexo),
+          str_to_upper(str_squish(Sexo)) == "FEMININO"
+        ) %>%
+        nrow()
+      
+      masculino <- df %>%
+        filter(
+          !is.na(Sexo),
+          str_to_upper(str_squish(Sexo)) == "MASCULINO"
+        ) %>%
+        nrow()
+      
+      
+      div(
+        class = "value-box-container",
+        
+        div(
+          class = "value-box green",
+          span(
+            class = "value-number",
+            total_participantes
+          ),
+          span(
+            class = "value-title",
+            input$filtro_local
+          )
+        ),
+        
+        div(
+          class = "value-box blue",
+          span(
+            class = "value-number",
+            feminino
+          ),
+          span(
+            class = "value-title",
+            "Feminino"
+          )
+        ),
+        
+        div(
+          class = "value-box orange",
+          span(
+            class = "value-number",
+            masculino
+          ),
+          span(
+            class = "value-title",
+            "Masculino"
+          )
+        )
+      )
+    }
   })
   
   # ========================================================
@@ -534,7 +834,39 @@ server <- function(input, output, session) {
       )
   })
   
-  
+  # ========================================================
+  # LEITURA AUTOMÁTICA - SEXO
+  # ========================================================
+  output$leitura_sexo <- renderUI({
+    
+    df <- dados()
+    
+    req(nrow(df) > 0)
+    
+    resumo <- df %>%
+      filter(!is.na(Sexo), Sexo != "") %>%
+      count(Sexo, name = "Total") %>%
+      mutate(
+        Percentagem = round(Total / sum(Total) * 100, 1)
+      )
+    
+    textos <- paste0(
+      "<b>", resumo$Sexo, "</b>: ",
+      resumo$Total, " participante(s) (",
+      resumo$Percentagem, "%)"
+    )
+    
+    div(
+      class = "box-leitura",
+      HTML(
+        paste0(
+          "<b>Sexo:</b> A distribuição dos participantes por sexo é composta por ",
+          paste(textos, collapse = "; "),
+          "."
+        )
+      )
+    )
+  })
   
   
    output$grafico_estado_civil <- renderPlotly({
@@ -561,7 +893,7 @@ server <- function(input, output, session) {
       insidetextorientation = "radial",
       hole = 0.55,
       marker = list(
-        colors = c('#9442d4', '#ff7f0e', '#69C7BE', '#FFD700', '#1f77b4', '#2ca02c'),
+        colors = c('#69C7BE', '#ffc107', '#1f77b4', '#8D6E63'),
         line = list(color = "#FFFFFF", width = 2)
       )
     ) %>%
@@ -573,1702 +905,4088 @@ server <- function(input, output, session) {
       )
   })
   
-  output$grafico_setor <- renderPlotly({
-    df <- dados() %>% count(Sector)
-    
-    plot_ly(df, x = ~Sector, y = ~n, type = "bar")
-  })
+   # ========================================================
+   # LEITURA AUTOMÁTICA - ESTADO CIVIL
+   # ========================================================
+   output$leitura_estado_civil <- renderUI({
+     
+     df <- dados()
+     
+     req(nrow(df) > 0)
+     
+     resumo <- df %>%
+       filter(!is.na(Estado_Civil), Estado_Civil != "") %>%
+       count(Estado_Civil, name = "Total") %>%
+       mutate(
+         Percentagem = round(Total / sum(Total) * 100, 1)
+       ) %>%
+       arrange(desc(Total))
+     
+     textos <- paste0(
+       "<b>", resumo$Estado_Civil, "</b>: ",
+       resumo$Total, " participante(s) (",
+       resumo$Percentagem, "%)"
+     )
+     
+     div(
+       class = "box-leitura",
+       HTML(
+         paste0(
+           "<b>Estado_Civíl:</b> Em relação ao estado civil, ",
+           paste(textos, collapse = "; "),
+           "."
+         )
+       )
+     )
+   })
+   
+   output$grafico_actividade_mar <- renderPlotly({
+     
+     df <- dados()
+     
+     req(nrow(df) > 0)
+     
+     df_resumo <- df %>%
+       filter(
+         !is.na(Principal_Actividade_Esta_Ligada_Mar),
+         Principal_Actividade_Esta_Ligada_Mar != "",
+         !is.na(Sexo),
+         Sexo != ""
+       ) %>%
+       mutate(
+         Resposta = str_to_title(
+           str_squish(Principal_Actividade_Esta_Ligada_Mar)
+         )
+       ) %>%
+       count(
+         Sexo,
+         Resposta,
+         name = "Total"
+       ) %>%
+       group_by(Sexo) %>%
+       mutate(
+         Percentagem = Total / sum(Total) * 100,
+         label = paste0(
+           Total,
+           "\n(",
+           round(Percentagem, 1),
+           "%)"
+         )
+       ) %>%
+       ungroup()
+     
+     df_resumo$Resposta <- factor(
+       df_resumo$Resposta,
+       levels = c("Não", "Sim")
+     )
+     
+     p <- ggplot(
+       df_resumo,
+       aes(
+         x = Sexo,
+         y = Percentagem,
+         fill = Resposta,
+         text = paste0(
+           "Sexo: ", Sexo,
+           "<br>Resposta: ", Resposta,
+           "<br>N = ", Total,
+           "<br>Percentagem = ", round(Percentagem, 1), "%"
+         )
+       )
+     ) +
+       geom_col(position = "stack") +
+       
+       geom_text(
+         aes(label = label),
+         position = position_stack(vjust = 0.5),
+         size = 3
+       ) +
+       
+       scale_y_continuous(
+         limits = c(0, 100),
+         breaks = seq(0, 100, 20),
+         labels = function(x) paste0(x, "%")
+       ) +
+       
+       scale_fill_manual(
+         values = c(
+           "Não" = "#69C7BE", 
+           "Sim" = "#ffc107"
+         )
+       ) +
+       
+       labs(
+         x = "",
+         y = "Percentagem",
+         fill = ""
+       ) +
+       
+       theme_minimal() +
+       theme(
+         plot.background = element_rect(
+           fill = "#f5f3f4",
+           colour = NA
+         ),
+         panel.background = element_rect(
+           fill = "#f5f3f4",
+           colour = NA
+         )
+       )
+     
+     ggplotly(
+       p,
+       tooltip = "text"
+     ) %>%
+       layout(
+         paper_bgcolor = "#f5f3f4",
+         plot_bgcolor = "#f5f3f4"
+       )
+   })
+   
+   output$leitura_actividade_mar <- renderUI({
+     
+     df <- dados()
+     
+     req(nrow(df) > 0)
+     
+     resumo <- df %>%
+       filter(
+         !is.na(Principal_Actividade_Esta_Ligada_Mar),
+         Principal_Actividade_Esta_Ligada_Mar != "",
+         !is.na(Sexo),
+         Sexo != ""
+       ) %>%
+       mutate(
+         Resposta = str_to_title(
+           str_squish(Principal_Actividade_Esta_Ligada_Mar)
+         )
+       ) %>%
+       count(Sexo, Resposta, name = "Total") %>%
+       group_by(Sexo) %>%
+       mutate(
+         Percentagem = Total / sum(Total) * 100
+       ) %>%
+       ungroup()
+     
+     textos <- resumo %>%
+       arrange(Sexo, Resposta) %>%
+       mutate(
+         texto = paste0(
+           "<b>", Sexo, "</b>: ",
+           Resposta, " = ",
+           Total, " participante(s) (",
+           round(Percentagem, 1),
+           "%)"
+         )
+       ) %>%
+       pull(texto)
+     
+     div(
+       class = "box-leitura",
+       HTML(
+         paste0(
+           "<b>Actividade ligada ao Mar:</b> Em relação à ligação da principal actividade ao mar, ",
+           paste(textos, collapse = "; "),
+           "."
+         )
+       )
+     )
+   })
+   
+   # ============================================================
+   # GRÁFICO - ACTIVIDADES LIGADAS AO MAR
+   # ============================================================
+   
+   output$grafico_actividade_mar_detalhe <- renderPlotly({
+     
+     df <- dados()
+     
+     req(nrow(df) > 0)
+     
+     # ----------------------------------------------------------
+     # Preparar dados
+     # ----------------------------------------------------------
+     
+     df_resumo <- df %>%
+       filter(
+         !is.na(Actividade_Mar),
+         Actividade_Mar != ""
+       ) %>%
+       mutate(
+         Actividade = case_when(
+           str_detect(
+             str_to_lower(Actividade_Mar),
+             "marisqueira"
+           ) ~ "Marisqueira",
+           
+           str_detect(
+             str_to_lower(Actividade_Mar),
+             "outra"
+           ) ~ "Outra",
+           
+           str_detect(
+             str_to_lower(Actividade_Mar),
+             "pesca"
+           ) ~ "Pesca artesanal",
+           
+           str_detect(
+             str_to_lower(Actividade_Mar),
+             "turismo"
+           ) ~ "Turismo do mar",
+           
+           str_detect(
+             str_to_lower(Actividade_Mar),
+             "vendedora"
+           ) ~ "Venda de peixe/marisco",
+           
+           TRUE ~ Actividade_Mar
+         )
+       ) %>%
+       count(
+         Actividade,
+         name = "Total"
+       ) %>%
+       mutate(
+         Percentagem = Total / sum(Total) * 100,
+         label = paste0(
+           Total,
+           " (",
+           round(Percentagem, 1),
+           "%)"
+         ),
+         Actividade = reorder(
+           Actividade,
+           Total
+         )
+       )
+     
+     req(nrow(df_resumo) > 0)
+     
+     # ----------------------------------------------------------
+     # Gráfico
+     # ----------------------------------------------------------
+     
+     p <- ggplot(
+       df_resumo,
+       aes(
+         x = Total,
+         y = Actividade,
+         text = paste0(
+           "Actividade: ", Actividade,
+           "<br>N = ", Total,
+           "<br>Percentagem = ",
+           round(Percentagem, 1),
+           "%"
+         )
+       )
+     ) +
+       
+       geom_col(
+         fill = "#69C7BE",
+         width = 0.7
+       ) +
+       
+       geom_text(
+         aes(label = label),
+         hjust = -0.1,
+         size = 3.5
+       ) +
+       
+       scale_x_continuous(
+         expand = expansion(
+           mult = c(0, 0.15)
+         )
+       ) +
+       
+       labs(
+         title = "",
+         x = "Número de participantes",
+         y = ""
+       ) +
+       
+       theme_minimal() +
+       
+       theme(
+         plot.background = element_rect(
+           fill = "#f5f3f4",
+           colour = NA
+         ),
+         
+         panel.background = element_rect(
+           fill = "#f5f3f4",
+           colour = NA
+         ),
+         
+         panel.grid.major.y = element_blank(),
+         
+         panel.grid.minor = element_blank(),
+         
+         axis.text.y = element_text(
+           size = 10
+         ),
+         
+         axis.text.x = element_text(
+           size = 9
+         )
+       )
+     
+     # ----------------------------------------------------------
+     # Plotly
+     # ----------------------------------------------------------
+     
+     ggplotly(
+       p,
+       tooltip = "text"
+     ) %>%
+       layout(
+         paper_bgcolor = "#f5f3f4",
+         plot_bgcolor = "#f5f3f4"
+       )
+   })
+   
+   
+   # ============================================================
+   # TEXTO DE LEITURA
+   # ============================================================
+   
+   output$leitura_actividade_mar_detalhe <- renderUI({
+     
+     df <- dados()
+     
+     req(nrow(df) > 0)
+     
+     # ----------------------------------------------------------
+     # Resumo
+     # ----------------------------------------------------------
+     
+     resumo <- df %>%
+       filter(
+         !is.na(Actividade_Mar),
+         Actividade_Mar != ""
+       ) %>%
+       mutate(
+         Actividade = case_when(
+           str_detect(
+             str_to_lower(Actividade_Mar),
+             "marisqueira"
+           ) ~ "Marisqueira",
+           
+           str_detect(
+             str_to_lower(Actividade_Mar),
+             "outra"
+           ) ~ "Outra",
+           
+           str_detect(
+             str_to_lower(Actividade_Mar),
+             "pesca"
+           ) ~ "Pesca artesanal",
+           
+           str_detect(
+             str_to_lower(Actividade_Mar),
+             "turismo"
+           ) ~ "Turismo do mar",
+           
+           str_detect(
+             str_to_lower(Actividade_Mar),
+             "vendedora"
+           ) ~ "Venda de peixe/marisco",
+           
+           TRUE ~ Actividade_Mar
+         )
+       ) %>%
+       count(
+         Actividade,
+         name = "Total"
+       ) %>%
+       mutate(
+         Percentagem = Total / sum(Total) * 100
+       ) %>%
+       arrange(desc(Total))
+     
+     req(nrow(resumo) > 0)
+     
+     # ----------------------------------------------------------
+     # Actividade mais frequente
+     # ----------------------------------------------------------
+     
+     maior <- resumo %>%
+       slice(1)
+     
+     # ----------------------------------------------------------
+     # Texto de cada actividade
+     # ----------------------------------------------------------
+     
+     textos <- resumo %>%
+       mutate(
+         texto = paste0(
+           "<b>",
+           Actividade,
+           "</b>: ",
+           Total,
+           " participante(s) (",
+           round(Percentagem, 1),
+           "%)"
+         )
+       ) %>%
+       pull(texto)
+     
+     # ----------------------------------------------------------
+     # Leitura final
+     # ----------------------------------------------------------
+     
+     div(
+       class = "box-leitura",
+       HTML(
+         paste0(
+           "<b>Leitura:</b> A actividade mais frequente é ",
+           "<b>",
+           maior$Actividade,
+           "</b>, com ",
+           maior$Total,
+           " participante(s) (",
+           round(maior$Percentagem, 1),
+           "%). ",
+           
+           "A distribuição das actividades é: ",
+           
+           paste(
+             textos,
+             collapse = "; "
+           ),
+           "."
+         )
+       )
+     )
+   })
+   
+  ############################## PAGINATOMADA DE DECISAO
   
-  # ========================================================
-  # IDADE
-  # ========================================================
-  output$grafico_idade <- renderPlotly({
-    df <- dados() %>%
-      mutate(Idade = as.numeric(Idade)) %>%
-      filter(!is.na(Idade)) %>%
-      mutate(grupo = ifelse(Idade <= 35, "<=35", ">35")) %>%
-      count(grupo)
-    
-    plot_ly(df, x = ~grupo, y = ~n, type = "bar")
-  })
+
   
   # ========================================================
   # PROTECÇÃO
   # ========================================================
   
-  output$grafico_decisao_geral <- renderPlotly({
-    
-    df <- dados()
-    
-    req(nrow(df) > 0)
-    
-    vars_decisao <- c(
-      "Decisao_Actividades_Economicas",
-      "Decisao_Educacao",
-      "Decisao_Futuro_Profissional",
-      "Decisao_Movimentos",
-      "Decisao_Pequenas_Despesas",
-      "Decisao_Grandes_Despesas"
-    )
-    
-    # Transformar base
-    df_long <- df %>%
-      select(all_of(vars_decisao)) %>%
-      pivot_longer(
-        everything(),
-        names_to = "Variavel",
-        values_to = "Resposta"
-      )
-    
-    # Ordem respostas
-    ordem_respostas <- c(
-      "Concordo totalmente",
-      "Concordo parcialmente",
-      "Não concordo nem discordo",
-      "Discordo parcialmente",
-      "Discordo totalmente"
-    )
-    
-    # Preparar dados
-    df_plot <- df_long %>%
-      filter(!is.na(Resposta)) %>%
-      group_by(Variavel, Resposta) %>%
-      summarise(n = n(), .groups = "drop") %>%
-      group_by(Variavel) %>%
-      mutate(
-        pct = round((n / sum(n)) * 100, 1),
-        texto = ifelse(pct >= 5, paste0(pct, "%"), "")
-      )
-    
-    # Ordem
-    df_plot$Resposta <- factor(
-      df_plot$Resposta,
-      levels = ordem_respostas
-    )
-    
-    # Labels bonitas
-    df_plot$Variavel <- recode(
-      df_plot$Variavel,
-      "Decisao_Actividades_Economicas" = "Actividades Económicas",
-      "Decisao_Educacao" = "Educação",
-      "Decisao_Futuro_Profissional" = "Futuro Profissional",
-      "Decisao_Movimentos" = "Mobilidade",
-      "Decisao_Pequenas_Despesas" = "Pequenas Despesas",
-      "Decisao_Grandes_Despesas" = "Grandes Despesas"
-    )
-    
-    # Cores
-    cores_respostas <- c(
-      "Concordo totalmente" = "#9442d4",
-      "Concordo parcialmente" = "#ff7f0e",
-      "Não concordo nem discordo" = "#69C7BE",
-      "Discordo parcialmente" = "#FFD700",
-      "Discordo totalmente" = "#1f77b4"
-    )
-    
-    plot_ly(
-      data = df_plot,
-      
-      y = ~Variavel,
-      x = ~pct,
-      
-      color = ~Resposta,
-      colors = cores_respostas,
-      
-      type = "bar",
-      orientation = "h",
-      
-      # VALORES NAS BARRAS
-      text = ~texto,
-      textposition = "inside",
-      
-      # TAMANHO TEXTO
-      textfont = list(
-        color = "white",
-        size = 15
-      ),
-      
-      hovertemplate = paste(
-        "<b>%{y}</b><br>",
-        "%{fullData.name}<br>",
-        "%{x}%<extra></extra>"
-      )
-      
-    ) %>%
-      layout(
-        
-        barmode = "stack",
-        
-        uniformtext = list(
-          minsize = 10,
-          mode = "show"
-        ),
-        
-        paper_bgcolor = "#f5f3f4",
-        plot_bgcolor = "#f5f3f4",
-        
-        xaxis = list(
-          title = "Percentagem (%)",
-          range = c(0, 100)
-        ),
-        
-        yaxis = list(
-          title = ""
-        ),
-        
-        legend = list(
-          orientation = "h",
-          x = 0,
-          y = 1.12,
-          title = list(text = "")
-        )
-      )
-  })
+  # output$grafico_decisao_geral <- renderPlotly({
+  #   
+  #   df <- dados()
+  #   
+  #   req(nrow(df) > 0)
+  #   
+  #   vars_decisao <- c(
+  #     "Decisao_Actividades_Economicas",
+  #     "Decisao_Educacao",
+  #     "Decisao_Futuro_Profissional",
+  #     "Decisao_Movimentos",
+  #     "Decisao_Pequenas_Despesas",
+  #     "Decisao_Grandes_Despesas"
+  #   )
+  #   
+  #   # Transformar base
+  #   df_long <- df %>%
+  #     select(all_of(vars_decisao)) %>%
+  #     pivot_longer(
+  #       everything(),
+  #       names_to = "Variavel",
+  #       values_to = "Resposta"
+  #     )
+  #   
+  #   # Ordem respostas
+  #   ordem_respostas <- c(
+  #     "Concordo totalmente",
+  #     "Concordo parcialmente",
+  #     "Não concordo nem discordo",
+  #     "Discordo parcialmente",
+  #     "Discordo totalmente"
+  #   )
+  #   
+  #   # Preparar dados
+  #   df_plot <- df_long %>%
+  #     filter(!is.na(Resposta)) %>%
+  #     group_by(Variavel, Resposta) %>%
+  #     summarise(n = n(), .groups = "drop") %>%
+  #     group_by(Variavel) %>%
+  #     mutate(
+  #       pct = round((n / sum(n)) * 100, 1),
+  #       texto = ifelse(pct >= 5, paste0(pct, "%"), "")
+  #     )
+  #   
+  #   # Ordem
+  #   df_plot$Resposta <- factor(
+  #     df_plot$Resposta,
+  #     levels = ordem_respostas
+  #   )
+  #   
+  #   # Labels bonitas
+  #   df_plot$Variavel <- recode(
+  #     df_plot$Variavel,
+  #     "Decisao_Actividades_Economicas" = "Actividades Económicas",
+  #     "Decisao_Educacao" = "Educação",
+  #     "Decisao_Futuro_Profissional" = "Futuro Profissional",
+  #     "Decisao_Movimentos" = "Mobilidade",
+  #     "Decisao_Pequenas_Despesas" = "Pequenas Despesas",
+  #     "Decisao_Grandes_Despesas" = "Grandes Despesas"
+  #   )
+  #   
+  #   # Cores
+  #   cores_respostas <- c(
+  #     "Concordo totalmente" = "#9442d4",
+  #     "Concordo parcialmente" = "#ff7f0e",
+  #     "Não concordo nem discordo" = "#69C7BE",
+  #     "Discordo parcialmente" = "#FFD700",
+  #     "Discordo totalmente" = "#1f77b4"
+  #   )
+  #   
+  #   plot_ly(
+  #     data = df_plot,
+  #     
+  #     y = ~Variavel,
+  #     x = ~pct,
+  #     
+  #     color = ~Resposta,
+  #     colors = cores_respostas,
+  #     
+  #     type = "bar",
+  #     orientation = "h",
+  #     
+  #     # VALORES NAS BARRAS
+  #     text = ~texto,
+  #     textposition = "inside",
+  #     
+  #     # TAMANHO TEXTO
+  #     textfont = list(
+  #       color = "white",
+  #       size = 15
+  #     ),
+  #     
+  #     hovertemplate = paste(
+  #       "<b>%{y}</b><br>",
+  #       "%{fullData.name}<br>",
+  #       "%{x}%<extra></extra>"
+  #     )
+  #     
+  #   ) %>%
+  #     layout(
+  #       
+  #       barmode = "stack",
+  #       
+  #       uniformtext = list(
+  #         minsize = 10,
+  #         mode = "show"
+  #       ),
+  #       
+  #       paper_bgcolor = "#f5f3f4",
+  #       plot_bgcolor = "#f5f3f4",
+  #       
+  #       xaxis = list(
+  #         title = "Percentagem (%)",
+  #         range = c(0, 100)
+  #       ),
+  #       
+  #       yaxis = list(
+  #         title = ""
+  #       ),
+  #       
+  #       legend = list(
+  #         orientation = "h",
+  #         x = 0,
+  #         y = 1.12,
+  #         title = list(text = "")
+  #       )
+  #     )
+  # })
+  # 
+  # 
+  # 
+  # cores_respostas <- c(
+  #   "Concordo totalmente" = "#9442d4",
+  #   "Concordo parcialmente" = "#ff7f0e",
+  #   "Não concordo nem discordo" = "#69C7BE",
+  #   "Discordo parcialmente" = "#FFD700",
+  #   "Discordo totalmente" = "#1f77b4"
+  # )
+  # 
+  # ordem_respostas <- c(
+  #   "Concordo totalmente",
+  #   "Concordo parcialmente",
+  #   "Não concordo nem discordo",
+  #   "Discordo parcialmente",
+  #   "Discordo totalmente"
+  # )
+  # 
+  # 
+
+   # ============================================================
+   # PODER DE DECIDIR SOBRE A ACTIVIDADE ECONÓMICA
+   # ============================================================
+   
+   output$grafico_poder_decidir_economica <- renderPlotly({
+     
+     df <- dados()
+     
+     req(nrow(df) > 0)
+     
+     # ----------------------------------------------------------
+     # Preparar dados
+     # ----------------------------------------------------------
+     
+     df_resumo <- df %>%
+       filter(
+         !is.na(Eu_Tenho_Poder_Decidir_Sobre_Actividade_Economica),
+         Eu_Tenho_Poder_Decidir_Sobre_Actividade_Economica != "",
+         !is.na(Tipo_Avaliacao),
+         Tipo_Avaliacao != ""
+       ) %>%
+       mutate(
+         Resposta = str_squish(
+           Eu_Tenho_Poder_Decidir_Sobre_Actividade_Economica
+         )
+       ) %>%
+       count(
+         Tipo_Avaliacao,
+         Resposta,
+         name = "Total"
+       ) %>%
+       group_by(Tipo_Avaliacao) %>%
+       mutate(
+         Percentagem = Total / sum(Total) * 100,
+         label = paste0(
+           round(Percentagem, 1),
+           "%"
+         )
+       ) %>%
+       ungroup()
+     
+     df_resumo$Resposta <- factor(
+       df_resumo$Resposta,
+       levels = c(
+         "Concordo totalmente",
+         "Concordo parcialmente",
+         "Não concordo, nem discordo",
+         "Discordo parcialmente",
+         "Discordo totalmente"
+       )
+     )
+     
+     
+     # ----------------------------------------------------------
+     # GRÁFICO
+     # ----------------------------------------------------------
+     
+     p <- ggplot(
+       df_resumo,
+       aes(
+         x = Tipo_Avaliacao,
+         y = Percentagem,
+         fill = Resposta,
+         text = paste0(
+           "Tipo de avaliação: ",
+           Tipo_Avaliacao,
+           "<br>Resposta: ",
+           Resposta,
+           "<br>N = ",
+           Total,
+           "<br>Percentagem = ",
+           round(Percentagem, 1),
+           "%"
+         )
+       )
+     ) +
+       
+       geom_col(
+         position = "stack",
+         width = 0.65
+       ) +
+       
+       
+       # --------------------------------------------------------
+     # APENAS PERCENTAGEM DENTRO DAS BARRAS
+     # --------------------------------------------------------
+     
+     geom_text(
+       aes(label = label),
+       position = position_stack(
+         vjust = 0.5
+       ),
+       size = 3.5
+     ) +
+       
+       
+       # --------------------------------------------------------
+     # EIXO Y = 100%
+     # --------------------------------------------------------
+     
+     scale_y_continuous(
+       limits = c(0, 100),
+       breaks = seq(0, 100, 20),
+       labels = function(x) {
+         paste0(x, "%")
+       }
+     ) +
+       
+       
+       # --------------------------------------------------------
+     # CORES
+     # --------------------------------------------------------
+     
+     scale_fill_manual(
+       values = c(
+         "Concordo totalmente" = "#ffc107",
+         "Concordo parcialmente" = "#F77333",
+         "Não concordo, nem discordo" = "#BDBDBD",
+         "Discordo parcialmente" = "#42A5F5",
+         "Discordo totalmente" = "#69C7BE"
+       )
+     ) +
+       
+       
+       # --------------------------------------------------------
+     # TÍTULOS
+     # --------------------------------------------------------
+     
+     labs(
+       x = "",
+       y = "Percentagem",
+       fill = "Resposta"
+     ) +
+       
+       
+       # --------------------------------------------------------
+     # TEMA
+     # --------------------------------------------------------
+     
+     theme_minimal() +
+       
+       theme(
+         plot.background = element_rect(
+           fill = "#f5f3f4",
+           colour = NA
+         ),
+         
+         panel.background = element_rect(
+           fill = "#f5f3f4",
+           colour = NA
+         ),
+         
+         panel.grid.minor = element_blank(),
+         
+         axis.text.x = element_text(
+           size = 10
+         ),
+         
+         axis.text.y = element_text(
+           size = 9
+         ),
+         
+         legend.title = element_text(
+           face = "bold"
+         ),
+         # Legenda por baixo
+         legend.position = "bottom"
+       )
+       
+     
+     
+     # ----------------------------------------------------------
+     # CONVERTER PARA PLOTLY
+     # ----------------------------------------------------------
+     
+     ggplotly(
+       p,
+       tooltip = "text"
+     ) %>%
+       layout(
+         paper_bgcolor = "#f5f3f4",
+         plot_bgcolor = "#f5f3f4"
+       )
+   })
+   
+   # ============================================================
+   # LEITURA POR TIPO DE AVALIAÇÃO
+   # ============================================================
+   
+   output$leitura_poder_decidir <- renderUI({
+     
+     df <- dados()
+     
+     req(nrow(df) > 0)
+     
+     
+     # ----------------------------------------------------------
+     # Preparar dados
+     # ----------------------------------------------------------
+     
+     resumo <- df %>%
+       filter(
+         !is.na(Eu_Tenho_Poder_Decidir_Sobre_Actividade_Economica),
+         Eu_Tenho_Poder_Decidir_Sobre_Actividade_Economica != "",
+         !is.na(Tipo_Avaliacao),
+         Tipo_Avaliacao != ""
+       ) %>%
+       mutate(
+         Resposta = str_squish(
+           Eu_Tenho_Poder_Decidir_Sobre_Actividade_Economica
+         )
+       ) %>%
+       count(
+         Tipo_Avaliacao,
+         Resposta,
+         name = "Total"
+       ) %>%
+       group_by(Tipo_Avaliacao) %>%
+       mutate(
+         Percentagem = Total / sum(Total) * 100
+       ) %>%
+       ungroup()
+     
+     
+     req(nrow(resumo) > 0)
+     
+     
+     # ----------------------------------------------------------
+     # ORDEM DA LEITURA
+     # ----------------------------------------------------------
+     
+     resumo$Resposta <- factor(
+       resumo$Resposta,
+       levels = c(
+         "Concordo totalmente",
+         "Concordo parcialmente",
+         "Não concordo, nem discordo",
+         "Discordo parcialmente",
+         "Discordo totalmente"
+       )
+     )
+     
+     
+     # ----------------------------------------------------------
+     # Criar texto para cada Tipo_Avaliacao
+     # ----------------------------------------------------------
+     
+     leituras <- resumo %>%
+       arrange(
+         Tipo_Avaliacao,
+         Resposta
+       ) %>%
+       group_by(Tipo_Avaliacao) %>%
+       summarise(
+         texto = paste0(
+           "<b>",
+           first(Tipo_Avaliacao),
+           "</b>: ",
+           
+           paste0(
+             Resposta,
+             " = ",
+             Total,
+             " (",
+             round(Percentagem, 1),
+             "%)",
+             collapse = "; "
+           )
+         ),
+         .groups = "drop"
+       )
+     
+     
+     # ----------------------------------------------------------
+     # Apresentar leitura
+     # ----------------------------------------------------------
+     
+     div(
+       class = "box-leitura",
+       
+       HTML(
+         paste0(
+           "<b>Eu tenho poder de decidir sobre as minhas actividades económicas (se trabalho, onde, que tipo de trabalho):</b> ",
+           paste(
+             leituras$texto,
+             collapse = ". "
+           ),
+           "."
+         )
+       )
+     )
+   })
+   
+   # ============================================================
+   # PODER SOBRE EDUCAÇÃO
+   # ============================================================
+   
+   output$grafico_poder_educacao <- renderPlotly({
+     
+     df <- dados()
+     
+     req(nrow(df) > 0)
+     
+     df_resumo <- df %>%
+       filter(
+         !is.na(Eu_Tenho_Poder_Sobre_Educacao),
+         Eu_Tenho_Poder_Sobre_Educacao != "",
+         !is.na(Tipo_Avaliacao),
+         Tipo_Avaliacao != ""
+       ) %>%
+       mutate(
+         Resposta = str_squish(
+           Eu_Tenho_Poder_Sobre_Educacao
+         )
+       ) %>%
+       count(
+         Tipo_Avaliacao,
+         Resposta,
+         name = "Total"
+       ) %>%
+       group_by(Tipo_Avaliacao) %>%
+       mutate(
+         Percentagem = Total / sum(Total) * 100,
+         label = paste0(
+           round(Percentagem, 1),
+           "%"
+         )
+       ) %>%
+       ungroup()
+     
+     
+     # ----------------------------------------------------------
+     # ORDEM DA BARRA
+     # De baixo para cima
+     # ----------------------------------------------------------
+     
+     df_resumo$Resposta <- factor(
+       df_resumo$Resposta,
+       levels = c(
+         "Concordo totalmente",
+         "Concordo parcialmente",
+         "Não concordo, nem discordo",
+         "Discordo parcialmente",
+         "Discordo totalmente"
+       )
+     )
+     
+     
+     # ----------------------------------------------------------
+     # GRÁFICO
+     # ----------------------------------------------------------
+     
+     p <- ggplot(
+       df_resumo,
+       aes(
+         x = Tipo_Avaliacao,
+         y = Percentagem,
+         fill = Resposta,
+         text = paste0(
+           "Tipo de avaliação: ",
+           Tipo_Avaliacao,
+           "<br>Resposta: ",
+           Resposta,
+           "<br>N = ",
+           Total,
+           "<br>Percentagem = ",
+           round(Percentagem, 1),
+           "%"
+         )
+       )
+     ) +
+       
+       geom_col(
+         position = "stack",
+         width = 0.65
+       ) +
+       
+       # Apenas percentagens dentro das barras
+       geom_text(
+         aes(label = label),
+         position = position_stack(vjust = 0.5),
+         size = 3.5
+       ) +
+       
+       # Eixo Y em 100%
+       scale_y_continuous(
+         limits = c(0, 100),
+         breaks = seq(0, 100, 20),
+         labels = function(x) {
+           paste0(x, "%")
+         }
+       ) +
+       
+       # Cores
+       scale_fill_manual(
+         values = c(
+           "Concordo totalmente" = "#ffc107",
+           "Concordo parcialmente" = "#F77333",
+           "Não concordo, nem discordo" = "#BDBDBD",
+           "Discordo parcialmente" = "#42A5F5",
+           "Discordo totalmente" = "#69C7BE"
+         )
+       ) +
+       
+       labs(
+         x = "",
+         y = "Percentagem",
+         fill = "Resposta"
+       ) +
+       
+       theme_minimal() +
+       
+       theme(
+         plot.background = element_rect(
+           fill = "#f5f3f4",
+           colour = NA
+         ),
+         
+         panel.background = element_rect(
+           fill = "#f5f3f4",
+           colour = NA
+         ),
+         
+         panel.grid.minor = element_blank(),
+         
+         axis.text.x = element_text(
+           size = 10
+         ),
+         
+         axis.text.y = element_text(
+           size = 9
+         ),
+         
+         legend.title = element_text(
+           face = "bold"
+         ),
+         
+         # Legenda por baixo
+         legend.position = "bottom",
+         legend.direction = "horizontal",
+         legend.justification = "center"
+       )
+     
+     
+     # ----------------------------------------------------------
+     # PLOTLY
+     # ----------------------------------------------------------
+     
+     ggplotly(
+       p,
+       tooltip = "text"
+     ) %>%
+       layout(
+         paper_bgcolor = "#f5f3f4",
+         plot_bgcolor = "#f5f3f4"
+       )
+   })
+   
+   # ============================================================
+   # LEITURA - PODER SOBRE EDUCAÇÃO
+   # ============================================================
+   
+   output$leitura_poder_educacao <- renderUI({
+     
+     df <- dados()
+     
+     req(nrow(df) > 0)
+     
+     resumo <- df %>%
+       filter(
+         !is.na(Eu_Tenho_Poder_Sobre_Educacao),
+         Eu_Tenho_Poder_Sobre_Educacao != "",
+         !is.na(Tipo_Avaliacao),
+         Tipo_Avaliacao != ""
+       ) %>%
+       mutate(
+         Resposta = str_squish(
+           Eu_Tenho_Poder_Sobre_Educacao
+         )
+       ) %>%
+       count(
+         Tipo_Avaliacao,
+         Resposta,
+         name = "Total"
+       ) %>%
+       group_by(Tipo_Avaliacao) %>%
+       mutate(
+         Percentagem = Total / sum(Total) * 100
+       ) %>%
+       ungroup()
+     
+     req(nrow(resumo) > 0)
+     
+     
+     # Ordem da leitura
+     resumo$Resposta <- factor(
+       resumo$Resposta,
+       levels = c(
+         "Concordo totalmente",
+         "Concordo parcialmente",
+         "Não concordo, nem discordo",
+         "Discordo parcialmente",
+         "Discordo totalmente"
+       )
+     )
+     
+     
+     # Criar texto por Tipo_Avaliacao
+     leituras <- resumo %>%
+       arrange(
+         Tipo_Avaliacao,
+         Resposta
+       ) %>%
+       group_by(Tipo_Avaliacao) %>%
+       summarise(
+         texto = paste0(
+           "<b>",
+           first(Tipo_Avaliacao),
+           "</b>: ",
+           paste0(
+             Resposta,
+             " = ",
+             Total,
+             " (",
+             round(Percentagem, 1),
+             "%)",
+             collapse = "; "
+           )
+         ),
+         .groups = "drop"
+       )
+     
+     
+     div(
+       class = "box-leitura",
+       
+       HTML(
+         paste0(
+           "<b>Eu tenho poder de decidir sobre a minha educação/escolaridade.:</b> ",
+           paste(
+             leituras$texto,
+             collapse = ". "
+           ),
+           "."
+         )
+       )
+     )
+   })
   
-  
-  
-  cores_respostas <- c(
-    "Concordo totalmente" = "#9442d4",
-    "Concordo parcialmente" = "#ff7f0e",
-    "Não concordo nem discordo" = "#69C7BE",
-    "Discordo parcialmente" = "#FFD700",
-    "Discordo totalmente" = "#1f77b4"
-  )
-  
-  ordem_respostas <- c(
-    "Concordo totalmente",
-    "Concordo parcialmente",
-    "Não concordo nem discordo",
-    "Discordo parcialmente",
-    "Discordo totalmente"
-  )
-  
+   # ============================================================
+   # GRÁFICO - QUEM DECIDE SOBRE O FUTURO PROFISSIONAL
+   # ============================================================
+   
+   output$grafico_decide_futuro_profissional <- renderPlotly({
+     
+     df <- dados()
+     
+     req(nrow(df) > 0)
+     
+     df_resumo <- df %>%
+       filter(
+         !is.na(Quem_Decide_Sobre_Futuro_Profissional),
+         Quem_Decide_Sobre_Futuro_Profissional != "",
+         !is.na(Tipo_Avaliacao),
+         Tipo_Avaliacao != ""
+       ) %>%
+       mutate(
+         Resposta = str_squish(
+           Quem_Decide_Sobre_Futuro_Profissional
+         )
+       ) %>%
+       count(
+         Tipo_Avaliacao,
+         Resposta,
+         name = "Total"
+       ) %>%
+       group_by(Tipo_Avaliacao) %>%
+       mutate(
+         Percentagem = Total / sum(Total) * 100,
+         label = paste0(
+           round(Percentagem, 1),
+           "%"
+         )
+       ) %>%
+       ungroup()
+     
+     
+     # ----------------------------------------------------------
+     # ORDEM DA BARRA
+     # De baixo para cima
+     # ----------------------------------------------------------
+     
+     df_resumo$Resposta <- factor(
+       df_resumo$Resposta,
+       levels = c(
+         "Concordo totalmente",
+         "Concordo parcialmente",
+         "Não concordo, nem discordo",
+         "Discordo parcialmente",
+         "Discordo totalmente"
+       )
+     )
+     
+     
+     # ----------------------------------------------------------
+     # GRÁFICO
+     # ----------------------------------------------------------
+     
+     p <- ggplot(
+       df_resumo,
+       aes(
+         x = Tipo_Avaliacao,
+         y = Percentagem,
+         fill = Resposta,
+         text = paste0(
+           "Tipo de avaliação: ",
+           Tipo_Avaliacao,
+           "<br>Resposta: ",
+           Resposta,
+           "<br>N = ",
+           Total,
+           "<br>Percentagem = ",
+           round(Percentagem, 1),
+           "%"
+         )
+       )
+     ) +
+       
+       geom_col(
+         position = "stack",
+         width = 0.65
+       ) +
+       
+       geom_text(
+         aes(label = label),
+         position = position_stack(vjust = 0.5),
+         size = 3.5
+       ) +
+       
+       scale_y_continuous(
+         limits = c(0, 100),
+         breaks = seq(0, 100, 20),
+         labels = function(x) {
+           paste0(x, "%")
+         }
+       ) +
+       
+       scale_fill_manual(
+         values = c(
+           "Concordo totalmente" = "#ffc107",
+           "Concordo parcialmente" = "#F77333",
+           "Não concordo, nem discordo" = "#BDBDBD",
+           "Discordo parcialmente" = "#42A5F5",
+           "Discordo totalmente" = "#69C7BE"
+         )
+       ) +
+       
+       labs(
+         x = "",
+         y = "Percentagem",
+         fill = "Resposta"
+       ) +
+       
+       theme_minimal() +
+       
+       theme(
+         plot.background = element_rect(
+           fill = "#f5f3f4",
+           colour = NA
+         ),
+         
+         panel.background = element_rect(
+           fill = "#f5f3f4",
+           colour = NA
+         ),
+         
+         panel.grid.minor = element_blank(),
+         
+         axis.text.x = element_text(
+           size = 10
+         ),
+         
+         axis.text.y = element_text(
+           size = 9
+         ),
+         
+         legend.title = element_text(
+           face = "bold"
+         ),
+         
+         legend.position = "bottom",
+         legend.direction = "horizontal",
+         legend.justification = "center"
+       )
+     
+     
+     # ----------------------------------------------------------
+     # PLOTLY
+     # ----------------------------------------------------------
+     
+     ggplotly(
+       p,
+       tooltip = "text"
+     ) %>%
+       layout(
+         paper_bgcolor = "#f5f3f4",
+         plot_bgcolor = "#f5f3f4"
+       )
+   })
+   
+   
+   # ============================================================
+   # LEITURA - QUEM DECIDE SOBRE O FUTURO PROFISSIONAL
+   # ============================================================
+   
+   output$leitura_decide_futuro_profissional <- renderUI({
+     
+     df <- dados()
+     
+     req(nrow(df) > 0)
+     
+     resumo <- df %>%
+       filter(
+         !is.na(Quem_Decide_Sobre_Futuro_Profissional),
+         Quem_Decide_Sobre_Futuro_Profissional != "",
+         !is.na(Tipo_Avaliacao),
+         Tipo_Avaliacao != ""
+       ) %>%
+       mutate(
+         Resposta = str_squish(
+           Quem_Decide_Sobre_Futuro_Profissional
+         )
+       ) %>%
+       count(
+         Tipo_Avaliacao,
+         Resposta,
+         name = "Total"
+       ) %>%
+       group_by(Tipo_Avaliacao) %>%
+       mutate(
+         Percentagem = Total / sum(Total) * 100
+       ) %>%
+       ungroup()
+     
+     req(nrow(resumo) > 0)
+     
+     
+     resumo$Resposta <- factor(
+       resumo$Resposta,
+       levels = c(
+         "Concordo totalmente",
+         "Concordo parcialmente",
+         "Não concordo, nem discordo",
+         "Discordo parcialmente",
+         "Discordo totalmente"
+       )
+     )
+     
+     
+     leituras <- resumo %>%
+       arrange(
+         Tipo_Avaliacao,
+         Resposta
+       ) %>%
+       group_by(Tipo_Avaliacao) %>%
+       summarise(
+         texto = paste0(
+           "<b>",
+           first(Tipo_Avaliacao),
+           "</b>: ",
+           paste0(
+             Resposta,
+             " = ",
+             Total,
+             " (",
+             round(Percentagem, 1),
+             "%)",
+             collapse = "; "
+           )
+         ),
+         .groups = "drop"
+       )
+     
+     
+     div(
+       class = "box-leitura",
+       
+       HTML(
+         paste0(
+           "<b>Eu tenho poder de decidir sobre as escolhas ligadas ao meu futuro profissional (aspirações, percurso):</b> ",
+           paste(
+             leituras$texto,
+             collapse = ". "
+           ),
+           "."
+         )
+       )
+     )
+   })
+   
+   # ============================================================
+   # GRÁFICO - QUEM DECIDE SOBRE OS MOVIMENTOS
+   # ============================================================
+   
+   output$grafico_decide_movimentos <- renderPlotly({
+     
+     df <- dados()
+     
+     req(nrow(df) > 0)
+     
+     df_resumo <- df %>%
+       filter(
+         !is.na(Quem_Decide_Sobre_Movimentos),
+         Quem_Decide_Sobre_Movimentos != "",
+         !is.na(Tipo_Avaliacao),
+         Tipo_Avaliacao != ""
+       ) %>%
+       mutate(
+         Resposta = str_squish(
+           Quem_Decide_Sobre_Movimentos
+         )
+       ) %>%
+       count(
+         Tipo_Avaliacao,
+         Resposta,
+         name = "Total"
+       ) %>%
+       group_by(Tipo_Avaliacao) %>%
+       mutate(
+         Percentagem = Total / sum(Total) * 100,
+         label = paste0(
+           round(Percentagem, 1),
+           "%"
+         )
+       ) %>%
+       ungroup()
+     
+     
+     # ----------------------------------------------------------
+     # ORDEM DA BARRA
+     # ----------------------------------------------------------
+     
+     df_resumo$Resposta <- factor(
+       df_resumo$Resposta,
+       levels = c(
+         "Concordo totalmente",
+         "Concordo parcialmente",
+         "Não concordo, nem discordo",
+         "Discordo parcialmente",
+         "Discordo totalmente"
+       )
+     )
+     
+     
+     # ----------------------------------------------------------
+     # GRÁFICO
+     # ----------------------------------------------------------
+     
+     p <- ggplot(
+       df_resumo,
+       aes(
+         x = Tipo_Avaliacao,
+         y = Percentagem,
+         fill = Resposta,
+         text = paste0(
+           "Tipo de avaliação: ",
+           Tipo_Avaliacao,
+           "<br>Resposta: ",
+           Resposta,
+           "<br>N = ",
+           Total,
+           "<br>Percentagem = ",
+           round(Percentagem, 1),
+           "%"
+         )
+       )
+     ) +
+       
+       geom_col(
+         position = "stack",
+         width = 0.65
+       ) +
+       
+       geom_text(
+         aes(label = label),
+         position = position_stack(vjust = 0.5),
+         size = 3.5
+       ) +
+       
+       scale_y_continuous(
+         limits = c(0, 100),
+         breaks = seq(0, 100, 20),
+         labels = function(x) {
+           paste0(x, "%")
+         }
+       ) +
+       
+       scale_fill_manual(
+         values = c(
+           "Concordo totalmente" = "#ffc107",
+           "Concordo parcialmente" = "#F77333",
+           "Não concordo, nem discordo" = "#BDBDBD",
+           "Discordo parcialmente" = "#42A5F5",
+           "Discordo totalmente" = "#69C7BE"
+         )
+       ) +
+       
+       labs(
+         x = "",
+         y = "Percentagem",
+         fill = "Resposta"
+       ) +
+       
+       theme_minimal() +
+       
+       theme(
+         plot.background = element_rect(
+           fill = "#f5f3f4",
+           colour = NA
+         ),
+         
+         panel.background = element_rect(
+           fill = "#f5f3f4",
+           colour = NA
+         ),
+         
+         panel.grid.minor = element_blank(),
+         
+         axis.text.x = element_text(
+           size = 10
+         ),
+         
+         axis.text.y = element_text(
+           size = 9
+         ),
+         
+         legend.title = element_text(
+           face = "bold"
+         ),
+         
+         legend.position = "bottom",
+         legend.direction = "horizontal",
+         legend.justification = "center"
+       )
+     
+     
+     # ----------------------------------------------------------
+     # PLOTLY
+     # ----------------------------------------------------------
+     
+     ggplotly(
+       p,
+       tooltip = "text"
+     ) %>%
+       layout(
+         paper_bgcolor = "#f5f3f4",
+         plot_bgcolor = "#f5f3f4"
+       )
+   })
+   
+   
+   # ============================================================
+   # LEITURA - QUEM DECIDE SOBRE OS MOVIMENTOS
+   # ============================================================
+   
+   output$leitura_decide_movimentos <- renderUI({
+     
+     df <- dados()
+     
+     req(nrow(df) > 0)
+     
+     resumo <- df %>%
+       filter(
+         !is.na(Quem_Decide_Sobre_Movimentos),
+         Quem_Decide_Sobre_Movimentos != "",
+         !is.na(Tipo_Avaliacao),
+         Tipo_Avaliacao != ""
+       ) %>%
+       mutate(
+         Resposta = str_squish(
+           Quem_Decide_Sobre_Movimentos
+         )
+       ) %>%
+       count(
+         Tipo_Avaliacao,
+         Resposta,
+         name = "Total"
+       ) %>%
+       group_by(Tipo_Avaliacao) %>%
+       mutate(
+         Percentagem = Total / sum(Total) * 100
+       ) %>%
+       ungroup()
+     
+     req(nrow(resumo) > 0)
+     
+     
+     resumo$Resposta <- factor(
+       resumo$Resposta,
+       levels = c(
+         "Concordo totalmente",
+         "Concordo parcialmente",
+         "Não concordo, nem discordo",
+         "Discordo parcialmente",
+         "Discordo totalmente"
+       )
+     )
+     
+     
+     leituras <- resumo %>%
+       arrange(
+         Tipo_Avaliacao,
+         Resposta
+       ) %>%
+       group_by(Tipo_Avaliacao) %>%
+       summarise(
+         texto = paste0(
+           "<b>",
+           first(Tipo_Avaliacao),
+           "</b>: ",
+           paste0(
+             Resposta,
+             " = ",
+             Total,
+             " (",
+             round(Percentagem, 1),
+             "%)",
+             collapse = "; "
+           )
+         ),
+         .groups = "drop"
+       )
+     
+     
+     div(
+       class = "box-leitura",
+       
+       HTML(
+         paste0(
+           "<b>Eu tenho poder de decidir sobre os meus movimentos (onde vou, quando, com quem, por quanto tempo).:</b> ",
+           paste(
+             leituras$texto,
+             collapse = ". "
+           ),
+           "."
+         )
+       )
+     )
+   })
+   
+   # ============================================================
+   # GRÁFICO - QUEM DECIDE SOBRE GRANDES DESPESAS FAMILIARES
+   # ============================================================
+   
+   output$grafico_decide_grandes_despesas <- renderPlotly({
+     
+     df <- dados()
+     
+     req(nrow(df) > 0)
+     
+     df_resumo <- df %>%
+       filter(
+         !is.na(Quem_Decide_Sobre_Grandes_Despesas_familiares),
+         Quem_Decide_Sobre_Grandes_Despesas_familiares != "",
+         !is.na(Tipo_Avaliacao),
+         Tipo_Avaliacao != ""
+       ) %>%
+       mutate(
+         Resposta = str_squish(
+           Quem_Decide_Sobre_Grandes_Despesas_familiares
+         )
+       ) %>%
+       count(
+         Tipo_Avaliacao,
+         Resposta,
+         name = "Total"
+       ) %>%
+       group_by(Tipo_Avaliacao) %>%
+       mutate(
+         Percentagem = Total / sum(Total) * 100,
+         label = paste0(
+           round(Percentagem, 1),
+           "%"
+         )
+       ) %>%
+       ungroup()
+     
+     
+     # ----------------------------------------------------------
+     # ORDEM DA BARRA
+     # ----------------------------------------------------------
+     
+     df_resumo$Resposta <- factor(
+       df_resumo$Resposta,
+       levels = c(
+         "Concordo totalmente",
+         "Concordo parcialmente",
+         "Não concordo, nem discordo",
+         "Discordo parcialmente",
+         "Discordo totalmente"
+       )
+     )
+     
+     
+     # ----------------------------------------------------------
+     # GRÁFICO
+     # ----------------------------------------------------------
+     
+     p <- ggplot(
+       df_resumo,
+       aes(
+         x = Tipo_Avaliacao,
+         y = Percentagem,
+         fill = Resposta,
+         text = paste0(
+           "Tipo de avaliação: ",
+           Tipo_Avaliacao,
+           "<br>Resposta: ",
+           Resposta,
+           "<br>N = ",
+           Total,
+           "<br>Percentagem = ",
+           round(Percentagem, 1),
+           "%"
+         )
+       )
+     ) +
+       
+       geom_col(
+         position = "stack",
+         width = 0.65
+       ) +
+       
+       geom_text(
+         aes(label = label),
+         position = position_stack(vjust = 0.5),
+         size = 3.5
+       ) +
+       
+       scale_y_continuous(
+         limits = c(0, 100),
+         breaks = seq(0, 100, 20),
+         labels = function(x) {
+           paste0(x, "%")
+         }
+       ) +
+       
+       scale_fill_manual(
+         values = c(
+           "Concordo totalmente" = "#ffc107",
+           "Concordo parcialmente" = "#F77333",
+           "Não concordo, nem discordo" = "#BDBDBD",
+           "Discordo parcialmente" = "#42A5F5",
+           "Discordo totalmente" = "#69C7BE"
+         )
+       ) +
+       
+       labs(
+         x = "",
+         y = "Percentagem",
+         fill = "Resposta"
+       ) +
+       
+       theme_minimal() +
+       
+       theme(
+         plot.background = element_rect(
+           fill = "#f5f3f4",
+           colour = NA
+         ),
+         
+         panel.background = element_rect(
+           fill = "#f5f3f4",
+           colour = NA
+         ),
+         
+         panel.grid.minor = element_blank(),
+         
+         axis.text.x = element_text(size = 10),
+         axis.text.y = element_text(size = 9),
+         
+         legend.title = element_text(face = "bold"),
+         legend.position = "bottom",
+         legend.direction = "horizontal",
+         legend.justification = "center"
+       )
+     
+     
+     ggplotly(
+       p,
+       tooltip = "text"
+     ) %>%
+       layout(
+         paper_bgcolor = "#f5f3f4",
+         plot_bgcolor = "#f5f3f4"
+       )
+   })
+   
+   
+   # ============================================================
+   # LEITURA - GRANDES DESPESAS FAMILIARES
+   # ============================================================
+   
+   output$leitura_decide_grandes_despesas <- renderUI({
+     
+     df <- dados()
+     
+     req(nrow(df) > 0)
+     
+     resumo <- df %>%
+       filter(
+         !is.na(Quem_Decide_Sobre_Grandes_Despesas_familiares),
+         Quem_Decide_Sobre_Grandes_Despesas_familiares != "",
+         !is.na(Tipo_Avaliacao),
+         Tipo_Avaliacao != ""
+       ) %>%
+       mutate(
+         Resposta = str_squish(
+           Quem_Decide_Sobre_Grandes_Despesas_familiares
+         )
+       ) %>%
+       count(
+         Tipo_Avaliacao,
+         Resposta,
+         name = "Total"
+       ) %>%
+       group_by(Tipo_Avaliacao) %>%
+       mutate(
+         Percentagem = Total / sum(Total) * 100
+       ) %>%
+       ungroup()
+     
+     req(nrow(resumo) > 0)
+     
+     resumo$Resposta <- factor(
+       resumo$Resposta,
+       levels = c(
+         "Concordo totalmente",
+         "Concordo parcialmente",
+         "Não concordo, nem discordo",
+         "Discordo parcialmente",
+         "Discordo totalmente"
+       )
+     )
+     
+     leituras <- resumo %>%
+       arrange(
+         Tipo_Avaliacao,
+         Resposta
+       ) %>%
+       group_by(Tipo_Avaliacao) %>%
+       summarise(
+         texto = paste0(
+           "<b>",
+           first(Tipo_Avaliacao),
+           "</b>: ",
+           paste0(
+             Resposta,
+             " = ",
+             Total,
+             " (",
+             round(Percentagem, 1),
+             "%)",
+             collapse = "; "
+           )
+         ),
+         .groups = "drop"
+       )
+     
+     div(
+       class = "box-leitura",
+       
+       HTML(
+         paste0(
+           "<b>Eu tenho poder de decidir sobre grandes despesas familiares:</b> ",
+           paste(
+             leituras$texto,
+             collapse = ". "
+           ),
+           "."
+         )
+       )
+     )
+   })
  
-  
-  output$grafico_decisao_economica <- renderPlotly({
-    
-    df <- dados()
-    req(nrow(df) > 0)
-    
-    df <- df %>%
-      count(Decisao_Actividades_Economicas) %>%
-      mutate(
-        pct = round(n / sum(n) * 100, 1)
-      )
-    
-    df$Decisao_Actividades_Economicas <- factor(
-      df$Decisao_Actividades_Economicas,
-      levels = ordem_respostas
-    )
-    
-    plot_ly(
-      df,
-      x = ~Decisao_Actividades_Economicas,
-      y = ~pct,
-      type = "bar",
-      color = ~Decisao_Actividades_Economicas,
-      colors = cores_respostas,
-      
-      text = ~paste0(pct, "%"),
-      
-      texttemplate = "%{text}",
-      textposition = "inside",
-      
-      insidetextanchor = "middle",
-      
-      textfont = list(color = "white", size = 12)
-      
-    ) %>%
-      layout(
-        showlegend = FALSE,
-        paper_bgcolor = "#f5f3f4",
-        plot_bgcolor = "#f5f3f4",
-        xaxis = list(title = "Decisao_Actividades_Economicas"),
-        yaxis = list(title = "Percentagem (%)")
-      )
-  })
-  
-  output$grafico_Decisao_Educacao <- renderPlotly({
-    
-    df <- dados()
-    req(nrow(df) > 0)
-    
-    df <- df %>%
-      count(Decisao_Educacao) %>%
-      mutate(pct = round(n / sum(n) * 100, 1))
-    
-    df$Decisao_Educacao <- factor(df$Decisao_Educacao, levels = ordem_respostas)
-    
-    plot_ly(
-      df,
-      x = ~Decisao_Educacao,
-      y = ~pct,
-      type = "bar",
-      color = ~Decisao_Educacao,
-      colors = cores_respostas,
-      
-      text = ~paste0(pct, "%"),
-      texttemplate = "%{text}",
-      textposition = "inside",
-      textfont = list(color = "white", size = 12)
-      
-    ) %>%
-      layout(
-        showlegend = FALSE,
-        paper_bgcolor = "#f5f3f4",
-        plot_bgcolor = "#f5f3f4",
-        xaxis = list(title = "Decisao_Educacao"),
-        yaxis = list(title = "Percentagem (%)")
-      )
-  })
-  
-  output$grafico_Decisao_Futuro_Profissional <- renderPlotly({
-    
-    df <- dados()
-    req(nrow(df) > 0)
-    
-    df <- df %>%
-      count(Decisao_Futuro_Profissional) %>%
-      mutate(pct = round(n / sum(n) * 100, 1))
-    
-    df$Decisao_Futuro_Profissional <- factor(df$Decisao_Futuro_Profissional, levels = ordem_respostas)
-    
-    plot_ly(
-      df,
-      x = ~Decisao_Futuro_Profissional,
-      y = ~pct,
-      type = "bar",
-      color = ~Decisao_Futuro_Profissional,
-      colors = cores_respostas,
-      
-      text = ~paste0(pct, "%"),
-      texttemplate = "%{text}",
-      textposition = "inside",
-      textfont = list(color = "white", size = 12)
-      
-    ) %>%
-      layout(
-        showlegend = FALSE,
-        paper_bgcolor = "#f5f3f4",
-        plot_bgcolor = "#f5f3f4",
-        xaxis = list(title = "Decisao_Futuro_Profissional"),
-        yaxis = list(title = "Percentagem (%)")
-      )
-  })
-  
-
-  output$grafico_Decisao_Movimentos <- renderPlotly({
-    
-    df <- dados()
-    req(nrow(df) > 0)
-    
-    df <- df %>%
-      count(Decisao_Movimentos) %>%
-      mutate(pct = round(n / sum(n) * 100, 1))
-    
-    df$Decisao_Movimentos <- factor(df$Decisao_Movimentos, levels = ordem_respostas)
-    
-    plot_ly(
-      df,
-      x = ~Decisao_Movimentos,
-      y = ~pct,
-      type = "bar",
-      color = ~Decisao_Movimentos,
-      colors = cores_respostas,
-      
-      text = ~paste0(pct, "%"),
-      texttemplate = "%{text}",
-      textposition = "inside",
-      textfont = list(color = "white", size = 12)
-      
-    ) %>%
-      layout(
-        showlegend = FALSE,
-        paper_bgcolor = "#f5f3f4",
-        plot_bgcolor = "#f5f3f4",
-        xaxis = list(title = "Decisao_Movimentos"),
-        yaxis = list(title = "Percentagem (%)")
-      )
-  })
-  
- 
-  output$grafico_Decisao_Pequenas_Despesas <- renderPlotly({
-    
-    df <- dados()
-    req(nrow(df) > 0)
-    
-    df <- df %>%
-      count(Decisao_Pequenas_Despesas) %>%
-      mutate(
-        pct = round(n / sum(n) * 100, 1)
-      )
-    
-    df$Decisao_Pequenas_Despesas <- factor(
-      df$Decisao_Pequenas_Despesas,
-      levels = ordem_respostas
-    )
-    
-    plot_ly(
-      df,
-      x = ~Decisao_Pequenas_Despesas,
-      y = ~pct,
-      type = "bar",
-      color = ~Decisao_Pequenas_Despesas,
-      colors = cores_respostas,
-      
-      text = ~paste0(pct, "%"),
-      
-      texttemplate = "%{text}",
-      textposition = "inside",
-      
-      insidetextanchor = "middle",
-      
-      textfont = list(color = "white", size = 12)
-      
-    ) %>%
-      layout(
-        showlegend = FALSE,
-        paper_bgcolor = "#f5f3f4",
-        plot_bgcolor = "#f5f3f4",
-        xaxis = list(title = "Decisao_Pequenas_Despesas"),
-        yaxis = list(title = "Percentagem (%)")
-      )
-  })
-  
-  output$grafico_Decisao_Grandes_Despesas <- renderPlotly({
-    
-    df <- dados()
-    req(nrow(df) > 0)
-    
-    df <- df %>%
-      count(Decisao_Grandes_Despesas) %>%
-      mutate(
-        pct = round(n / sum(n) * 100, 1)
-      )
-    
-    df$Decisao_Grandes_Despesas <- factor(
-      df$Decisao_Grandes_Despesas,
-      levels = ordem_respostas
-    )
-    
-    plot_ly(
-      df,
-      x = ~Decisao_Grandes_Despesas,
-      y = ~pct,
-      type = "bar",
-      color = ~Decisao_Grandes_Despesas,
-      colors = cores_respostas,
-      
-      text = ~paste0(pct, "%"),
-      
-      texttemplate = "%{text}",
-      textposition = "inside",
-      
-      insidetextanchor = "middle",
-      
-      textfont = list(color = "white", size = 12)
-      
-    ) %>%
-      layout(
-        showlegend = FALSE,
-        paper_bgcolor = "#f5f3f4",
-        plot_bgcolor = "#f5f3f4",
-        xaxis = list(title = "Decisao_Grandes_Despesas"),
-        yaxis = list(title = "Percentagem (%)")
-      )
-  })
+   # ============================================================
+   # GRÁFICO - QUEM DECIDE SOBRE PEQUENAS DESPESAS FAMILIARES
+   # ============================================================
+   
+   output$grafico_decide_pequenas_despesas <- renderPlotly({
+     
+     df <- dados()
+     
+     req(nrow(df) > 0)
+     
+     df_resumo <- df %>%
+       filter(
+         !is.na(Quem_Decide_Sobre_Pequenas_Despesas_familiares),
+         Quem_Decide_Sobre_Pequenas_Despesas_familiares != "",
+         !is.na(Tipo_Avaliacao),
+         Tipo_Avaliacao != ""
+       ) %>%
+       mutate(
+         Resposta = str_squish(
+           Quem_Decide_Sobre_Pequenas_Despesas_familiares
+         )
+       ) %>%
+       count(
+         Tipo_Avaliacao,
+         Resposta,
+         name = "Total"
+       ) %>%
+       group_by(Tipo_Avaliacao) %>%
+       mutate(
+         Percentagem = Total / sum(Total) * 100,
+         label = paste0(
+           round(Percentagem, 1),
+           "%"
+         )
+       ) %>%
+       ungroup()
+     
+     
+     # ----------------------------------------------------------
+     # ORDEM DA BARRA
+     # ----------------------------------------------------------
+     
+     df_resumo$Resposta <- factor(
+       df_resumo$Resposta,
+       levels = c(
+         "Concordo totalmente",
+         "Concordo parcialmente",
+         "Não concordo, nem discordo",
+         "Discordo parcialmente",
+         "Discordo totalmente"
+       )
+     )
+     
+     
+     # ----------------------------------------------------------
+     # GRÁFICO
+     # ----------------------------------------------------------
+     
+     p <- ggplot(
+       df_resumo,
+       aes(
+         x = Tipo_Avaliacao,
+         y = Percentagem,
+         fill = Resposta,
+         text = paste0(
+           "Tipo de avaliação: ",
+           Tipo_Avaliacao,
+           "<br>Resposta: ",
+           Resposta,
+           "<br>N = ",
+           Total,
+           "<br>Percentagem = ",
+           round(Percentagem, 1),
+           "%"
+         )
+       )
+     ) +
+       
+       geom_col(
+         position = "stack",
+         width = 0.65
+       ) +
+       
+       geom_text(
+         aes(label = label),
+         position = position_stack(vjust = 0.5),
+         size = 3.5
+       ) +
+       
+       scale_y_continuous(
+         limits = c(0, 100),
+         breaks = seq(0, 100, 20),
+         labels = function(x) {
+           paste0(x, "%")
+         }
+       ) +
+       
+       scale_fill_manual(
+         values = c(
+           "Concordo totalmente" = "#ffc107",
+           "Concordo parcialmente" = "#F77333",
+           "Não concordo, nem discordo" = "#BDBDBD",
+           "Discordo parcialmente" = "#42A5F5",
+           "Discordo totalmente" = "#69C7BE"
+         )
+       ) +
+       
+       labs(
+         x = "",
+         y = "Percentagem",
+         fill = "Resposta"
+       ) +
+       
+       theme_minimal() +
+       
+       theme(
+         plot.background = element_rect(
+           fill = "#f5f3f4",
+           colour = NA
+         ),
+         
+         panel.background = element_rect(
+           fill = "#f5f3f4",
+           colour = NA
+         ),
+         
+         panel.grid.minor = element_blank(),
+         
+         axis.text.x = element_text(size = 10),
+         axis.text.y = element_text(size = 9),
+         
+         legend.title = element_text(face = "bold"),
+         legend.position = "bottom",
+         legend.direction = "horizontal",
+         legend.justification = "center"
+       )
+     
+     
+     ggplotly(
+       p,
+       tooltip = "text"
+     ) %>%
+       layout(
+         paper_bgcolor = "#f5f3f4",
+         plot_bgcolor = "#f5f3f4"
+       )
+   })
+   
+   
+   # ============================================================
+   # LEITURA - PEQUENAS DESPESAS FAMILIARES
+   # ============================================================
+   
+   output$leitura_decide_pequenas_despesas <- renderUI({
+     
+     df <- dados()
+     
+     req(nrow(df) > 0)
+     
+     resumo <- df %>%
+       filter(
+         !is.na(Quem_Decide_Sobre_Pequenas_Despesas_familiares),
+         Quem_Decide_Sobre_Pequenas_Despesas_familiares != "",
+         !is.na(Tipo_Avaliacao),
+         Tipo_Avaliacao != ""
+       ) %>%
+       mutate(
+         Resposta = str_squish(
+           Quem_Decide_Sobre_Pequenas_Despesas_familiares
+         )
+       ) %>%
+       count(
+         Tipo_Avaliacao,
+         Resposta,
+         name = "Total"
+       ) %>%
+       group_by(Tipo_Avaliacao) %>%
+       mutate(
+         Percentagem = Total / sum(Total) * 100
+       ) %>%
+       ungroup()
+     
+     req(nrow(resumo) > 0)
+     
+     resumo$Resposta <- factor(
+       resumo$Resposta,
+       levels = c(
+         "Concordo totalmente",
+         "Concordo parcialmente",
+         "Não concordo, nem discordo",
+         "Discordo parcialmente",
+         "Discordo totalmente"
+       )
+     )
+     
+     leituras <- resumo %>%
+       arrange(
+         Tipo_Avaliacao,
+         Resposta
+       ) %>%
+       group_by(Tipo_Avaliacao) %>%
+       summarise(
+         texto = paste0(
+           "<b>",
+           first(Tipo_Avaliacao),
+           "</b>: ",
+           paste0(
+             Resposta,
+             " = ",
+             Total,
+             " (",
+             round(Percentagem, 1),
+             "%)",
+             collapse = "; "
+           )
+         ),
+         .groups = "drop"
+       )
+     
+     div(
+       class = "box-leitura",
+       
+       HTML(
+         paste0(
+           "<b>Eu tenho poder de decidir sobre pequenas despesas familiares:</b> ",
+           paste(
+             leituras$texto,
+             collapse = ". "
+           ),
+           "."
+         )
+       )
+     )
+   })
   
 
   # ========================================================
-  # NORMAS
+  #                               NORMAS Sociais
   # ========================================================
-  output$grafico_Violencia_Domestica_geral <- renderPlotly({
-    
-    df <- dados()
-    
-    req(nrow(df) > 0)
-    
-    vars_violencia <- c(
-      "Violencia_Domestica_Aceitavel",
-      "Violencia_Assunto_Privado"
-    )
-    
-    # Transformar base
-    df_long <- df %>%
-      select(all_of(vars_violencia)) %>%
-      pivot_longer(
-        everything(),
-        names_to = "Variavel",
-        values_to = "Resposta"
-      )
-    
-    # Ordem respostas
-    ordem_respostas <- c(
-      "Concordo totalmente",
-      "Concordo parcialmente",
-      "Não concordo nem discordo",
-      "Discordo parcialmente",
-      "Discordo totalmente"
-    )
-    
-    # Preparar dados
-    df_plot <- df_long %>%
-      filter(!is.na(Resposta)) %>%
-      group_by(Variavel, Resposta) %>%
-      summarise(n = n(), .groups = "drop") %>%
-      group_by(Variavel) %>%
-      mutate(
-        pct = round((n / sum(n)) * 100, 1),
-        texto = ifelse(pct >= 5, paste0(pct, "%"), "")
-      )
-    
-    # Ordem
-    df_plot$Resposta <- factor(
-      df_plot$Resposta,
-      levels = ordem_respostas
-    )
-    
-    # Labels bonitas
-    df_plot$Variavel <- recode(
-      df_plot$Variavel,
-      "Violencia_Domestica_Aceitavel" = "Mulher Aceitando a violência doméstica",
-      "Violencia_Assunto_Privado" = "Violência Assunto Privado"
-    )
-    
-    # Cores
-    cores_respostas <- c(
-      "Concordo totalmente" = "#9442d4",
-      "Concordo parcialmente" = "#ff7f0e",
-      "Não concordo nem discordo" = "#69C7BE",
-      "Discordo parcialmente" = "#FFD700",
-      "Discordo totalmente" = "#1f77b4" 
-    )
-    
-    plot_ly(
-      data = df_plot,
-      
-      y = ~Variavel,
-      x = ~pct,
-      
-      color = ~Resposta,
-      colors = cores_respostas,
-      
-      type = "bar",
-      orientation = "h",
-      
-      # VALORES NAS BARRAS
-      text = ~texto,
-      textposition = "inside",
-      
-      # TAMANHO TEXTO
-      textfont = list(
-        color = "white",
-        size = 15
-      ),
-      
-      hovertemplate = paste(
-        "<b>%{y}</b><br>",
-        "%{fullData.name}<br>",
-        "%{x}%<extra></extra>"
-      )
-      
-    ) %>%
-      layout(
-        
-        barmode = "stack",
-        
-        uniformtext = list(
-          minsize = 10,
-          mode = "show"
-        ),
-        
-        paper_bgcolor = "#f5f3f4",
-        plot_bgcolor = "#f5f3f4",
-        
-        xaxis = list(
-          title = "Percentagem (%)",
-          range = c(0, 100)
-        ),
-        
-        yaxis = list(
-          title = ""
-        ),
-        
-        legend = list(
-          orientation = "h",
-          x = 0,
-          y = 1.12,
-          title = list(text = "")
-        )
-      )
-  })
-  
-  
-  output$grafico_Violencia_Domestica_Aceitavel <- renderPlotly({
-    
-    df <- dados()
-    req(nrow(df) > 0)
-    
-    df <- df %>%
-      count(Violencia_Domestica_Aceitavel) %>%
-      mutate(
-        pct = round(n / sum(n) * 100, 1)
-      )
-    
-    df$Violencia_Domestica_Aceitavel <- factor(
-      df$Violencia_Domestica_Aceitavel,
-      levels = ordem_respostas
-    )
-    
-    plot_ly(
-      df,
-      x = ~Violencia_Domestica_Aceitavel,
-      y = ~pct,
-      type = "bar",
-      color = ~Violencia_Domestica_Aceitavel,
-      colors = cores_respostas,
-      
-      text = ~paste0(pct, "%"),
-      
-      texttemplate = "%{text}",
-      textposition = "inside",
-      
-      insidetextanchor = "middle",
-      
-      textfont = list(color = "white", size = 12)
-      
-    ) %>%
-      layout(
-        showlegend = FALSE,
-        paper_bgcolor = "#f5f3f4",
-        plot_bgcolor = "#f5f3f4",
-        xaxis = list(title = "Violencia_Domestica_Aceitavel"),
-        yaxis = list(title = "Percentagem (%)")
-      )
-  })
-  
-  output$grafico_Violencia_Assunto_Privado <- renderPlotly({
-    
-    df <- dados()
-    req(nrow(df) > 0)
-    
-    df <- df %>%
-      count(Violencia_Assunto_Privado) %>%
-      mutate(
-        pct = round(n / sum(n) * 100, 1)
-      )
-    
-    df$Violencia_Assunto_Privado <- factor(
-      df$Violencia_Assunto_Privado,
-      levels = ordem_respostas
-    )
-    
-    plot_ly(
-      df,
-      x = ~Violencia_Assunto_Privado,
-      y = ~pct,
-      type = "bar",
-      color = ~Violencia_Assunto_Privado,
-      colors = cores_respostas,
-      
-      text = ~paste0(pct, "%"),
-      
-      texttemplate = "%{text}",
-      textposition = "inside",
-      
-      insidetextanchor = "middle",
-      
-      textfont = list(color = "white", size = 12)
-      
-    ) %>%
-      layout(
-        showlegend = FALSE,
-        paper_bgcolor = "#f5f3f4",
-        plot_bgcolor = "#f5f3f4",
-        xaxis = list(title = "Violencia_Assunto_Privado"),
-        yaxis = list(title = "Percentagem (%)")
-      )
-  })
-  
-  
-  output$grafico_Gostaria_Ser_Lider <- renderPlotly({
-    
-    df <- dados()
-    req(nrow(df) > 0)
-    
-    # Contagem
-    df_plot <- df %>%
-      count(Gostaria_Ser_Lider, Sexo) %>%
-      mutate(
-        pct = round(n / sum(n) * 100, 1),
-        
-        label = paste0(
-          n,
-          "<br>",
-          pct,
-          "%"
-        )
-      )
-    
-    # Ordem das respostas
-    df_plot$Gostaria_Ser_Lider <- factor(
-      df_plot$Gostaria_Ser_Lider,
-      levels = c(
-        "Já ocupo uma posição de liderança",
-        "Não",
-        "Provavelmente não",
-        "Provavelmente sim",
-        "Sim"
-      )
-    )
-    
-    plot_ly(
-      data = df_plot,
-      
-      x = ~Gostaria_Ser_Lider,
-      y = ~pct,
-      
-      type = "bar",
-      
-      color = ~Sexo,
-      
-      colors = c(
-        "Masculino" = "#ff7f0e",
-        "Feminino" = "#9442d4"
-      ),
-      
-      text = ~label,
-      
-      texttemplate = "%{text}",
-      textposition = "inside",
-      
-      insidetextanchor = "middle",
-      
-      textfont = list(
-        color = "white",
-        size = 11
-      )
-      
-    ) %>%
-      
-      layout(
-        
-        barmode = "group",
-        
-        paper_bgcolor = "#f5f3f4",
-        plot_bgcolor = "#f5f3f4",
-        
-        xaxis = list(
-          title = "Gostaria de Ser Líder"
-        ),
-        
-        yaxis = list(
-          title = "Percentagem Total (%)",
-          ticksuffix = "%"
-        ),
-        
-        legend = list(
-          title = list(text = "<b>Sexo</b>")
-        )
-      )
-  })
- 
-  
-  output$grafico_Mulheres_Lideranca_Frequencia <- renderPlotly({
-    
-    df <- dados()
-    req(nrow(df) > 0)
-    
-    # Contagem
-    df_plot <- df %>%
-      count(Mulheres_Lideranca_Frequencia, Sexo) %>%
-      mutate(
-        pct = round(n / sum(n) * 100, 1),
-        
-        label = paste0(
-          n,
-          "<br>",
-          pct,
-          "%"
-        )
-      )
-    
-    # Ordem das respostas
-    df_plot$Mulheres_Lideranca_Frequencia <- factor(
-      df_plot$Mulheres_Lideranca_Frequencia,
-      levels = c(
-        "Nunca",
-        "Raramente",
-        "Algumas vezes",
-        "Frequentemente"
-      )
-    )
-    
-    plot_ly(
-      data = df_plot,
-      
-      x = ~Mulheres_Lideranca_Frequencia,
-      y = ~pct,
-      
-      type = "bar",
-      
-      color = ~Sexo,
-      
-      colors = c(
-        "Masculino" = "#ff7f0e",
-        "Feminino" = "#9442d4"
-      ),
-      
-      text = ~label,
-      
-      texttemplate = "%{text}",
-      textposition = "inside",
-      
-      insidetextanchor = "middle",
-      
-      textfont = list(
-        color = "white",
-        size = 11
-      )
-      
-    ) %>%
-      
-      layout(
-        
-        barmode = "group",
-        
-        paper_bgcolor = "#f5f3f4",
-        plot_bgcolor = "#f5f3f4",
-        
-        xaxis = list(
-          title = "Com que frequência as mulheres são selecionadas para posições de liderança"
-        ),
-        
-        yaxis = list(
-          title = "Percentagem Total (%)",
-          ticksuffix = "%"
-        ),
-        
-        legend = list(
-          title = list(text = "<b>Sexo</b>")
-        )
-      )
-  })
-  
-  
-  
-  # ========================================================
-  # PARTICIPAÇÃO
-  # ========================================================
-  output$grafico_participacao <- renderPlotly({
-    df <- dados() %>% count(Participacao_Comunitaria)
-    
-    plot_ly(df, x = ~Participacao_Comunitaria, y = ~n, type = "bar")
-  })
-  
-  # ========================================================
-  # MONITORIA
-  # ========================================================
-  
-  observe({
-    req(input$distritoInput_namp_pi)
-    
-    df <- Presencas_Nexus
-    if (input$distritoInput_namp_pi != "TODOS") {
-      df <- df %>% filter(Distrito == input$distritoInput_namp_pi)
-    }
-    
-    comunidades <- c("TODAS", sort(unique(df$Comunidade)))
-    
-    updateSelectInput(
-      session,
-      "comunidadeInput_namp_pi",
-      choices = comunidades,
-      selected = "TODAS"
-    )
-  })
-  
-  observe({
-    req(input$comunidadeInput_namp_pi)
-    
-    df <- Presencas_Nexus
-    if (input$distritoInput_namp_pi != "TODOS") df <- df %>% filter(Distrito == input$distritoInput_namp_pi)
-    if (input$comunidadeInput_namp_pi != "TODAS") df <- df %>% filter(Comunidade == input$comunidadeInput_namp_pi)
-    
-    facilitadores <- c("TODOS", sort(unique(df$Facilitadores)))
-    
-    updateSelectInput(
-      session,
-      "facilitadorInput_namp_pi",
-      choices = facilitadores,
-      selected = "TODOS"
-    )
-  })
-  
-  
-  dados_filtrados_presencas <- reactive({
-    df <- Presencas_Nexus
-    if (input$distritoInput_namp_pi != "TODOS") df <- df %>% filter(Distrito == input$distritoInput_namp_pi)
-    if (input$comunidadeInput_namp_pi != "TODAS") df <- df %>% filter(Comunidade == input$comunidadeInput_namp_pi)
-    if (!is.null(input$facilitadorInput_namp_pi) && input$facilitadorInput_namp_pi != "TODOS") df <- df %>% filter(Facilitadores == input$facilitadorInput_namp_pi)
-    df
-  })
-  
-  
-  output$graficoParticipacaoGlobal <- renderPlotly({
-    df <- dados_filtrados_presencas() 
-    
-    if (nrow(df) == 0) {
-      showNotification("Nenhum dado disponível para os filtros selecionados.", type = "warning")
-      return(NULL)
-    }
-    
-    
-    sessao_cols <- names(df)[grepl("^Sessão_?\\d+$", names(df))]
-    sessao_cols_ordenadas <- sessao_cols[order(as.numeric(gsub("Sessão_?", "", sessao_cols)))]
-    
-    df_long <- df %>%
-      tidyr::pivot_longer(
-        cols = all_of(sessao_cols_ordenadas),
-        names_to = "Sessao",
-        values_to = "Presenca"
-      ) %>%
-      filter(Presenca == "Presente") %>%
-      group_by(Sessao, Sexo) %>%
-      summarise(Count = n(), .groups = "drop") %>%
-      mutate(
-        Count = as.numeric(Count),
-        Sessao_Num = as.numeric(gsub("Sessão_?", "", Sessao))
-      ) %>%
-      arrange(Sessao_Num) %>%
-      mutate(Sessao = factor(Sessao, levels = sessao_cols_ordenadas))
-    
-    totais_sessao <- df_long %>%
-      group_by(Sessao) %>%
-      summarise(total = sum(Count), .groups = "drop")
-    
-    linha_referencia <- if (input$distritoInput_namp_pi == "TODOS") 400 else 200
-    
-    df_long <- df_long %>%
-      group_by(Sessao) %>%
-      arrange(Sexo) %>%
-      mutate(
-        y0 = cumsum(lag(Count, default = 0)),
-        y_center = y0 + Count / 2
-      )
-    
-    annotations_segmentos <- lapply(1:nrow(df_long), function(i) {
-      list(
-        x = df_long$Sessao[i],
-        y = df_long$y_center[i],
-        text = as.character(df_long$Count[i]),
-        showarrow = FALSE,
-        font = list(size = 12, color = "white")
-      )
-    })
-    
-    annotations_totais <- lapply(1:nrow(totais_sessao), function(i) {
-      list(
-        x = totais_sessao$Sessao[i],
-        y = totais_sessao$total[i] + 10,
-        text = paste("", totais_sessao$total[i]),
-        showarrow = FALSE,
-        font = list(size = 12, color = "black")
-      )
-    })
-    
-    all_annotations <- c(annotations_segmentos, annotations_totais)
-    
-    plot_ly(
-      data = df_long,
-      x = ~Sessao,
-      y = ~Count,
-      color = ~Sexo,
-      colors = c("Feminino" = "#9942D4", "Masculino" = "#F77333"),
-      type = "bar",
-      hovertemplate = "%{x}<br>Sexo: %{color}<br>Presenças: %{y}<extra></extra>"
-    ) %>%
-      layout(
-        title = "",
-        barmode = "stack",
-        paper_bgcolor = "#f5f3f4",
-        plot_bgcolor = "#f5f3f4",
-        xaxis = list(title = ""),
-        yaxis = list(title = "Número de Presenças"),
-        shapes = list(
-          list(
-            type = "line",
-            x0 = 0,
-            x1 = length(unique(df_long$Sessao)) + 1,
-            y0 = linha_referencia,
-            y1 = linha_referencia,
-            line = list(color = "purple", dash = "dash", width = 2)
-          )
-        ),
-        annotations = all_annotations
-      )
-  })
-  
-  output$texto_participacao_sessoes <- renderUI({
-    
-    df <- dados_filtrados_presencas()
-    
-    # ================================
-    # 🎯 META DINÂMICA
-    # ================================
-    meta_total <- if (input$distritoInput_namp_pi == "TODOS") 400 else 200
-    
-    sessoes_cols <- names(df)[grepl("^Sessão_?\\d+$", names(df))]
-    
-    sessoes_data <- df[, sessoes_cols]
-    
-    presencas_por_sessao <- colSums(sessoes_data == "Presente", na.rm = TRUE)
-    
-    sessao_max <- names(which.max(presencas_por_sessao))
-    valor_max <- max(presencas_por_sessao)
-    
-    sessao_min <- names(which.min(presencas_por_sessao))
-    valor_min <- min(presencas_por_sessao)
-    
-    sessoes_atingiram <- names(presencas_por_sessao[presencas_por_sessao >= meta_total])
-    
-    media_sessoes <- mean(presencas_por_sessao)
-    
-    # ================================
-    # 📌 CASO 1: TODOS
-    # ================================
-    if (input$distritoInput_namp_pi == "TODOS") {
-      
-      texto <- paste0(
-        
-        "A análise global do programa, considerando todos os distritos, ",
-        "define uma meta de <b>", meta_total, "</b> participantes por sessão. ",
-        
-        "A sessão com maior participação foi <b>", sessao_max, "</b> com <b>", valor_max, "</b> presenças, ",
-        "enquanto a menor participação ocorreu na <b>", sessao_min, "</b> com <b>", valor_min, "</b> presenças. ",
-        
-        if (length(sessoes_atingiram) > 0) {
-          paste0("A(s) sessão(ões) que atingiu(aram) a meta foram: <b>",
-                 paste(sessoes_atingiram, collapse = ", "),
-                 "</b>. ")
-        } else {
-          "Nenhuma sessão atingiu a meta estabelecida. "
-        },
-        
-        "Em média, as sessões registaram <b>", round(media_sessoes, 1), "</b> presenças."
-      )
-      
-    } else {
-      
-      # ================================
-      # 📌 CASO 2: DISTRITO SELECIONADO
-      # ================================
-      
-      distrito <- input$distritoInput_namp_pi
-      
-      total_participantes <- nrow(df)
-      
-      texto <- paste0(
-        
-        "No distrito de <b>", distrito, "</b>, a análise das sessões ",
-        "considera uma meta de <b>", meta_total, "</b> participantes por sessão. ",
-        
-        "Registam-se <b>", total_participantes, "</b> participantes no universo filtrado. ",
-        
-        "A sessão com maior participação foi <b>", sessao_max, "</b> com <b>", valor_max, "</b> presenças, ",
-        "enquanto a menor participação ocorreu na <b>", sessao_min, "</b> com <b>", valor_min, "</b> presenças. ",
-        
-        if (length(sessoes_atingiram) > 0) {
-          paste0("A(s) sessão(ões) que atingiu(aram) a meta foram: <b>",
-                 paste(sessoes_atingiram, collapse = ", "),
-                 "</b>. ")
-        } else {
-          "Nenhuma sessão atingiu a meta estabelecida. "
-        },
-        
-        "Em média, as sessões registaram <b>", round(media_sessoes, 1), "</b> presenças no distrito."
-      )
-    }
-    
-    HTML(paste0(
-      "<div style='background:#f5f3f4; padding:12px; border-radius:6px;'>",
-      texto,
-      "</div>"
-    ))
-  })
-  # ###################### PARTICIPACAO POR SEXO ##################  
-  # 
-  output$graficoParticipacaoSexo <- renderPlotly({
-
-    df <- dados_filtrados_presencas()
-
-    if (nrow(df) == 0) {
-      showNotification("Nenhum dado disponível para os filtros selecionados.", type = "warning")
-      return(NULL)
-    }
-
-    sessao_cols <- names(df)[grepl("^Sessão_?\\d+$", names(df))]
-    sessao_cols_ordenadas <- sessao_cols[order(as.numeric(gsub("Sessão_?", "", sessao_cols)))]
-
-    previstos <- df %>%
-      group_by(Sexo) %>%
-      summarise(Previsto = n(), .groups = "drop")
-
-    df_long <- df %>%
-      tidyr::pivot_longer(
-        cols = all_of(sessao_cols_ordenadas),
-        names_to = "Sessao",
-        values_to = "Presenca"
-      ) %>%
-      filter(Presenca == "Presente") %>%
-      group_by(Sessao, Sexo) %>%
-      summarise(Count = n(), .groups = "drop") %>%
-      left_join(previstos, by = "Sexo") %>%
-      mutate(
-        Porcentagem = Count / Previsto * 100
-      )
-
-    df_long <- df_long %>%
-      mutate(
-        Sessao_Num = as.numeric(gsub("Sessão_?", "", Sessao)),
-        Sessao = factor(Sessao, levels = sessao_cols_ordenadas)
-      ) %>%
-      arrange(Sessao_Num)
-
-    df_long <- df_long %>%
-      mutate(textpos = ifelse(Sexo == "Feminino", "top center", "bottom center"))
-
-
-    cores_legenda <- c("Feminino" = "#9942D4", "Masculino" = "#F77333")
-
-    max_porcentagem <- max(df_long$Porcentagem, na.rm = TRUE)
-    limite_y <- ifelse(max_porcentagem + 10 > 100, max_porcentagem + 10, 110)
-
-    plot_ly(
-      data = df_long,
-      x = ~Sessao,
-      y = ~Porcentagem,
-      type = 'scatter',
-      mode = 'lines+markers+text',
-      color = ~Sexo,
-      colors = cores_legenda,
-      text = ~paste0(round(Porcentagem,1), "%"),
-      textposition = ~textpos,
-      marker = list(size = 10),
-      line = list(width = 3),
-      hovertemplate = "%{x}<br>Sexo: %{color}<br>Percentual: %{y:.1f}%<extra></extra>"
-    ) %>%
-      layout(
-        title = list(
-          text = "",
-          font = list(size = 16, face = "bold")
-        ),
-        paper_bgcolor = "#f5f3f4",
-        plot_bgcolor = "#f5f3f4",
-        xaxis = list(title = "Sessão", tickfont = list(size = 12)),
-        yaxis = list(title = "Percentual (%)", range = c(0, limite_y), tickfont = list(size = 12)),
-        legend = list(title = list(text = "<b>Sexo</b>"))
-      )
-  })
-
-  output$texto_participacao_sexo <- renderUI({
-
-    df <- dados_filtrados_presencas()
-
-    sessoes_cols <- names(df)[grepl("^Sessão_?\\d+$", names(df))]
-
-    previstos <- df %>%
-      dplyr::count(Sexo) %>%
-      dplyr::rename(Previsto = n)
-
-    df_long <- df %>%
-      tidyr::pivot_longer(
-        cols = all_of(sessoes_cols),
-        names_to = "Sessao",
-        values_to = "Presenca"
-      ) %>%
-      dplyr::filter(Presenca == "Presente") %>%
-      dplyr::group_by(Sessao, Sexo) %>%
-      dplyr::summarise(Count = n(), .groups = "drop") %>%
-      dplyr::left_join(previstos, by = "Sexo") %>%
-      dplyr::mutate(Porcentagem = (Count / Previsto) * 100)
-
-    # médias por sexo ao longo das sessões
-    media_sexo <- df_long %>%
-      dplyr::group_by(Sexo) %>%
-      dplyr::summarise(media = mean(Porcentagem, na.rm = TRUE))
-
-    sessoes_medias <- df_long %>%
-      dplyr::group_by(Sessao) %>%
-      dplyr::summarise(total = sum(Count), .groups = "drop")
-
-    sessao_max <- sessoes_medias %>% dplyr::slice_max(total, n = 1)
-    sessao_min <- sessoes_medias %>% dplyr::slice_min(total, n = 1)
-
-    texto <- paste0(
-
-      "O gráfico apresenta a evolução da participação por sessão, desagregada por sexo, ",
-      "permitindo analisar o comportamento de adesão ao longo do processo formativo. ",
-
-      "Em média, as mulheres registam <b>", round(media_sexo$media[media_sexo$Sexo == "Feminino"], 1), "%</b> ",
-      "de participação e os homens <b>", round(media_sexo$media[media_sexo$Sexo == "Masculino"], 1), "%</b>. ",
-
-      "A sessão com maior participação global é <b>", sessao_max$Sessao, "</b>, ",
-      "enquanto a menor participação ocorre na <b>", sessao_min$Sessao, "</b>, ",
-      "indicando variações no nível de engajamento ao longo das sessões."
-    )
-
-    HTML(paste0(
-      "<div style='background:#f5f3f4; padding:12px; border-radius:6px;'>",
-      texto,
-      "</div>"
-    ))
-  })
-  # 
-  # ################################ ACOMPANHAMENTO ################################## 
-  # 
-  # 
-  # =====================================================
-  # 🎨 FUNÇÃO PONTOS
-  # =====================================================
-  formatar_pontos <- function(x) {
-    sapply(x, function(valor) {
-
-      if (is.na(valor) || valor == "") {
-        '<span style="color: grey; font-size: 40px;">&#9679;</span>'
-
-      } else if (valor == "Presente") {
-        '<span style="color: purple; font-size: 40px;">&#9679;</span>'
-
-      } else if (valor == "Ausente") {
-        '<span style="color: red; font-size: 40px;">&#9679;</span>'
-
-      } else {
-        '<span style="color: grey; font-size: 40px;">&#9679;</span>'
-      }
-    })
-  }
-
-  # =====================================================
-  # 🔁 UPDATE COMUNIDADE
-  # =====================================================
-  observeEvent(input$distritoInput_, {
-
-    df <- Presencas_Nexus
-
-    comunidades <- if (input$distritoInput_ == "TODOS") {
-      sort(unique(df$Comunidade))
-    } else {
-      sort(unique(df$Comunidade[df$Distrito == input$distritoInput_]))
-    }
-
-    updateSelectInput(
-      session,
-      "comunidadeAcompanhamento",
-      choices = c("TODAS", comunidades),
-      selected = "TODAS"
-    )
-  })
-
-  # =====================================================
-  # 🔁 UPDATE FACILITADOR
-  # =====================================================
-  observeEvent(
-    list(input$distritoInput_, input$comunidadeAcompanhamento),
-    {
-
-      df <- Presencas_Nexus
-
-      if (input$distritoInput_ != "TODOS") {
-        df <- df %>% dplyr::filter(Distrito == input$distritoInput_)
-      }
-
-      if (input$comunidadeAcompanhamento != "TODAS") {
-        df <- df %>% dplyr::filter(Comunidade == input$comunidadeAcompanhamento)
-      }
-
-      facilitadores <- sort(unique(df$Facilitadores))
-
-      updateSelectInput(
-        session,
-        "facilitadorInput",
-        choices = c("TODOS", facilitadores),
-        selected = "TODOS"
-      )
-    },
-    ignoreInit = TRUE
-  )
-
-  # =====================================================
-  # 📊 COLUNAS DE SESSÕES
-  # =====================================================
-  col_sessoes <- names(Presencas_Nexus)[grepl("^Sessão_?\\d+$", names(Presencas_Nexus))]
-  col_sessoes <- col_sessoes[order(as.numeric(gsub("Sessão_?", "", col_sessoes)))]
-
-  # =====================================================
-  # 📊 DADOS FILTRADOS + QUALIDADE (OPÇÃO 2)
-  # =====================================================
-  dados_filtered <- reactive({
-
-    df <- Presencas_Nexus
-
-    if (input$distritoInput_ != "TODOS") {
-      df <- df %>% dplyr::filter(Distrito == input$distritoInput_)
-    }
-
-    if (input$comunidadeAcompanhamento != "TODAS") {
-      df <- df %>% dplyr::filter(Comunidade == input$comunidadeAcompanhamento)
-    }
-
-    if (input$facilitadorInput != "TODOS") {
-      df <- df %>% dplyr::filter(Facilitadores == input$facilitadorInput)
-    }
-
-    total_sessoes <- length(col_sessoes)
-
-    df <- df %>%
-      dplyr::mutate(
-
-        sessoes_preenchidas = rowSums(
-          dplyr::across(all_of(col_sessoes), ~ !is.na(.) & . != ""),
-          na.rm = TRUE
-        ),
-
-        score = round((sessoes_preenchidas / total_sessoes) * 100, 1),
-        score = ifelse(score > 100, 100, score),
-
-        # =========================
-        # 🚦 QUALIDADE (OPÇÃO 2)
-        # =========================
-        qualidade = dplyr::case_when(
-          score == 100 ~ "Excelente",
-          score >= 80 ~ "Bom",
-          score >= 60 ~ "Médio",
-          TRUE ~ "Crítico"
-        )
-      )
-
-    df <- df[rowSums(df[col_sessoes] == "Presente", na.rm = TRUE) > 0, ]
-
-    df
-  })
-
-  # =====================================================
-  # 🎨 LEGENDA
-  # =====================================================
-  output$pontosPresenca <- renderUI({
-
-    HTML(paste0(
-      '<span style="color: purple; font-size: 25px;">&#9679;</span> Presente &nbsp;&nbsp;',
-      '<span style="color: red; font-size: 25px;">&#9679;</span> Ausente &nbsp;&nbsp;',
-      '<span style="color: grey; font-size: 25px;">&#9679;</span> Não Preenchido'
-    ))
-  })
-
-  # =====================================================
-  # 🧠 TEXTO EXPLICATIVO
-  # =====================================================
-  output$texto_presencas <- renderUI({
-
-    df <- dados_filtered()
-
-    total <- nrow(df)
-    media <- round(mean(df$score, na.rm = TRUE), 1)
-
-    criticos <- sum(df$qualidade == "Crítico")
-    excelentes <- sum(df$qualidade == "Excelente")
-
-    facilitadores_criticos <- df %>%
-      dplyr::group_by(Facilitadores) %>%
-      dplyr::summarise(media = mean(score, na.rm = TRUE), .groups = "drop") %>%
-      dplyr::filter(media < 60) %>%
-      dplyr::pull(Facilitadores)
-
-    txt_fac <- if (length(facilitadores_criticos) == 0) {
-      "Nenhum facilitador crítico identificado."
-    } else {
-      paste(facilitadores_criticos, collapse = ", ")
-    }
-
-    div(
-      style = "background-color:#f5f3f4; padding:12px; border-radius:6px;",
-
-      tags$p(
-        style = "margin:0; text-align:justify;",
-
-        tags$b("📊 Qualidade de Dados — Presenças Individuais: "),
-
-        "Foram analisados ", tags$b(total), " participantes. ",
-        "A taxa média de qualidade é de ", tags$b(paste0(media, "%")), ". ",
-
-        tags$br(), tags$br(),
-
-        "🟢 Excelentes: ", tags$b(excelentes),
-        " | 🟡 Bom/Médio/Crítico distribuídos no sistema. ",
-
-        tags$br(), tags$br(),
-
-        "🔴 Críticos: ", tags$b(criticos),
-
-        tags$br(), tags$br(),
-
-        tags$b("⚠️ Facilitadores com baixa qualidade de registo: "),
-        txt_fac,
-
-        tags$br(), tags$br(),
-
-        "O indicador de qualidade segue uma escala de desempenho: ",
-        "Excelente (100%), Bom (≥80%), Médio (≥60%) e Crítico (<60%). ",
-        "Este painel permite monitoria contínua da qualidade dos dados e identificação de riscos operacionais."
-      )
-    )
-  })
-  
-  # # =====================================================
-  # # 📋 TABELA (CRÍTICOS PRIMEIRO)
-  # # =====================================================
-  output$tabelaPresencas <- renderDataTable({
-
-    df <- dados_filtered()
-
-    df[col_sessoes] <- lapply(df[col_sessoes], as.character)
-    df[col_sessoes] <- lapply(df[col_sessoes], formatar_pontos)
-
-    df$qualidade <- factor(
-      df$qualidade,
-      levels = c("Crítico", "Médio", "Bom", "Excelente")
-    )
-
-    datatable(
-      df[order(df$qualidade), c(
-        "Comunidade",
-        "Nome_participante",
-        "score",
-        "qualidade",
-        col_sessoes
-      )],
-
-      escape = FALSE,
-      rownames = FALSE,
-
-      options = list(
-        pageLength = 10,
-        dom = "lfrtip",
-        columnDefs = list(list(className = "dt-center", targets = "_all"))
-      )
-    )
-  })
-  
-  # ####### Participantes que concluiram a formacao PI 
-  # 
-  # ================================
-  # 📊 BASE FILTRADA
-  # ================================
-  dados_filtrados <- reactive({
-
-    df <- Presencas_Nexus
-
-    if (input$distritoInput_ != "TODOS") {
-      df <- df %>% dplyr::filter(Distrito == input$distritoInput_)
-    }
-
-    if (input$comunidadeAcompanhamento != "TODAS") {
-      df <- df %>% dplyr::filter(Comunidade == input$comunidadeAcompanhamento)
-    }
-
-    if (input$facilitadorInput != "TODOS") {
-      df <- df %>% dplyr::filter(Facilitadores == input$facilitadorInput)
-    }
-
-    df
-  })
-
-  # ================================
-  # 📊 CLASSIFICAÇÃO DE CONCLUSÃO
-  # ================================
-  participantes_concluintes <- reactive({
-
-    df <- dados_filtrados()
-
-    sessoes <- df %>%
-      dplyr::select(starts_with("Sessão"))
-
-    df$total_presencas <- rowSums(sessoes == "Presente", na.rm = TRUE)
-
-    df$concluiu <- ifelse(df$total_presencas >= 8, "Concluiu", "Não concluiu")
-
-    df
-  })
-
-  # =====================================================
-  # 📊 GRÁFICO 1 — CONCLUINTES POR DISTRITO E SEXO
-  # =====================================================
-  dados_grafico <- reactive({
-
-    participantes_concluintes() %>%
-      dplyr::filter(concluiu == "Concluiu") %>%
-      dplyr::count(Distrito, Sexo) %>%
-      dplyr::group_by(Distrito) %>%
-      dplyr::mutate(
-        percent = (n / sum(n)) * 100,
-        label = paste0(n, "<br>", round(percent, 1), "%")
-      ) %>%
-      dplyr::ungroup()
-  })
-
-  limite_y <- reactive({
-    max(dados_grafico()$percent, na.rm = TRUE) * 1.2
-  })
-
-  output$grafico_N <- renderPlotly({
-
-    plot_ly(
-      data = dados_grafico(),
-      x = ~Distrito,
-      y = ~percent,
-      color = ~Sexo,
-      colors = c("Feminino" = "#9942D4", "Masculino" = "#F77333"),
-      type = "bar",
-      text = ~label,
-      textposition = "outside",
-      cliponaxis = FALSE
-    ) %>%
-      layout(
-        title = list(
-          text = "",
-          font = list(size = 16)
-        ),
-        paper_bgcolor = "#f5f3f4",
-        plot_bgcolor = "#f5f3f4",
-        xaxis = list(
-          title = "Distrito",
-          tickfont = list(size = 12)
-        ),
-        yaxis = list(
-          title = "Percentual (%)",
-          range = c(0, limite_y()),
-          tickfont = list(size = 12)
-        ),
-        legend = list(title = list(text = "<b>Sexo</b>")),
-        barmode = "group"
-      )
-  })
-
-  output$texto_grafico_N <- renderUI({
-
-    df_base <- participantes_concluintes() %>%
-      dplyr::filter(concluiu == "Concluiu")
-
-    distrito_sel <- input$distritoInput_
-
-    # ================================
-    # 📌 CASO 1: TODOS
-    # ================================
-    if (distrito_sel == "TODOS") {
-
-      total_geral <- nrow(df_base)
-
-      distritos <- df_base %>%
-        dplyr::count(Distrito) %>%
-        dplyr::mutate(percent = (n / sum(n)) * 100) %>%
-        dplyr::arrange(desc(n))
-
-      top <- distritos %>% dplyr::slice(1)
-
-      sexo_geral <- df_base %>%
-        dplyr::count(Sexo) %>%
-        dplyr::mutate(percent = (n / sum(n)) * 100)
-
-      fem <- sexo_geral$percent[sexo_geral$Sexo == "Feminino"]
-      masc <- sexo_geral$percent[sexo_geral$Sexo == "Masculino"]
-
-      texto <- paste0(
-        "Consideram-se concluintes todos os participantes que participaram em pelo menos 8 das 12 sessões previstas. ",
-        "No total, registam-se <b>", total_geral, "</b> concluintes (",
-        round(sexo_geral$n[sexo_geral$Sexo == "Feminino"]), " mulheres e ",
-        round(sexo_geral$n[sexo_geral$Sexo == "Masculino"]), " homens). ",
-
-        "O distrito com maior representação é <b>", top$Distrito, "</b> com <b>", round(top$percent, 1), "%</b>."
-      )
-
-    } else {
-
-      # ================================
-      # 📌 CASO 2: DISTRITO SELECIONADO
-      # ================================
-
-      df_dist <- df_base %>%
-        dplyr::filter(Distrito == distrito_sel)
-
-      total_dist <- nrow(df_dist)
-
-      sexo_dist <- df_dist %>%
-        dplyr::count(Sexo) %>%
-        dplyr::mutate(percent = (n / sum(n)) * 100)
-
-      fem <- sexo_dist$percent[sexo_dist$Sexo == "Feminino"]
-      masc <- sexo_dist$percent[sexo_dist$Sexo == "Masculino"]
-
-      texto <- paste0(
-        "No total, registam-se <b>", total_dist, "</b> concluintes do distrito de <b>", distrito_sel, "</b>, ",
-        "com <b>", round(fem, 1), "%</b> feminino e <b>", round(masc, 1), "%</b> masculino."
-      )
-    }
-
-    HTML(paste0(
-      "<div style='background:#f5f3f4; padding:12px; border-radius:6px;'>",
-      texto,
-      "</div>"
-    ))
-  })
-  # 
-  # 
-  # # =====================================================
-  # # 📊 GRÁFICO 2 — SITUAÇÃO DOS CONCLUINTES
-  # # =====================================================
-  dados_situacao <- reactive({
-
-    df <- participantes_concluintes() %>%
-      dplyr::filter(concluiu == "Concluiu")
-
-    total_geral <- nrow(df)
-
-    df %>%
-      dplyr::count(Situacao_Participante, Sexo) %>%
-      dplyr::mutate(
-        percent_global = (n / total_geral) * 100,
-        label = paste0(n, " (", round(percent_global, 1), "%)")
-      )
-  })
-
-  limite_y_situacao <- reactive({
-    100
-  })
-
-  output$grafico_situacao_C <- renderPlotly({
-
-    plot_ly(
-      data = dados_situacao(),
-      x = ~Situacao_Participante,
-      y = ~n,   # ✔ valores reais
-      color = ~Sexo,
-      colors = c("Feminino" = "#9942D4", "Masculino" = "#F77333"),
-      type = "bar",
-
-      text = ~label,
-
-      textposition = "inside",
-      insidetextanchor = "middle",
-
-      textfont = list(
-        size = 12,
-        color = "white"
-      ),
-
-      hovertemplate = paste(
-        "<b>Situação:</b> %{x}<br>",
-        "<b>Sexo:</b> %{color}<br>",
-        "<b>Valor:</b> %{y}<br>",
-        "<b>% do total geral:</b> %{customdata:.1f}%<extra></extra>"
-      ),
-
-      customdata = ~percent_global
-    ) %>%
-      layout(
-        title = list(text = ""),
-
-        paper_bgcolor = "#f5f3f4",
-        plot_bgcolor = "#f5f3f4",
-
-        xaxis = list(
-          title = "Situação do Participante",
-          tickangle = -25
-        ),
-
-        yaxis = list(
-          title = "Número de Participantes"
-        ),
-
-        legend = list(title = list(text = "<b>Sexo</b>")),
-        barmode = "stack"
-      )
-  })
-
-  output$texto_situacao_interpretacao <- renderUI({
-
-    df_base <- participantes_concluintes() %>%
-      dplyr::filter(concluiu == "Concluiu")
-
-    distrito_sel <- input$distritoInput_
-
-    # ================================
-    # 📌 CASO 1: TODOS
-    # ================================
-    if (distrito_sel == "TODOS") {
-
-      total_geral <- nrow(df_base)
-
-      sexo_geral <- df_base %>%
-        dplyr::count(Sexo)
-
-      situacao_geral <- df_base %>%
-        dplyr::count(Situacao_Participante) %>%
-        dplyr::mutate(percent = (n / sum(n)) * 100)
-
-      texto <- paste0(
-        "No total, registam-se <b>", total_geral, "</b> concluintes ",
-        "(<b>", sexo_geral$n[sexo_geral$Sexo == "Feminino"], "</b> mulheres e ",
-        "<b>", sexo_geral$n[sexo_geral$Sexo == "Masculino"], "</b> homens). ",
-
-        "Em termos de situação dos concluintes, observa-se a seguinte distribuição: ",
-        paste0(
-          situacao_geral$Situacao_Participante,
-          " (", round(situacao_geral$percent, 1), "%)",
-          collapse = ", "
-        ),
-        "."
-      )
-
-    } else {
-
-      # ================================
-      # 📌 CASO 2: DISTRITO SELECIONADO
-      # ================================
-
-      df_dist <- df_base %>%
-        dplyr::filter(Distrito == distrito_sel)
-
-      total_dist <- nrow(df_dist)
-
-      sexo_dist <- df_dist %>%
-        dplyr::count(Sexo)
-
-      situacao_dist <- df_dist %>%
-        dplyr::count(Situacao_Participante) %>%
-        dplyr::mutate(percent = (n / sum(n)) * 100)
-
-      texto <- paste0(
-        "No distrito de <b>", distrito_sel, "</b>, registam-se <b>", total_dist, "</b> concluintes ",
-        "(<b>", sexo_dist$n[sexo_dist$Sexo == "Feminino"], "</b> mulheres e ",
-        "<b>", sexo_dist$n[sexo_dist$Sexo == "Masculino"], "</b> homens). ",
-
-        "Em termos de situação dos concluintes, observa-se a seguinte distribuição: ",
-        paste0(
-          situacao_dist$Situacao_Participante,
-          " (", round(situacao_dist$percent, 1), "%)",
-          collapse = ", "
-        ),
-        "."
-      )
-    }
-
-    HTML(paste0(
-      "<div style='background:#f5f3f4; padding:12px; border-radius:6px;'>",
-      texto,
-      "</div>"
-    ))
-  })
-
+   
+   
+   # ============================================================
+   # GRÁFICO - DESEJO DE SER ESCOLHIDO PARA LIDERANÇA
+   # ============================================================
+   
+   output$grafico_deseja_lideranca <- renderPlotly({
+     
+     df <- dados()
+     
+     req(nrow(df) > 0)
+     
+     df_resumo <- df %>%
+       filter(
+         !is.na(Gostaria_Escolhido_Lider_Duma_Organizacao),
+         Gostaria_Escolhido_Lider_Duma_Organizacao != "",
+         !is.na(Tipo_Avaliacao),
+         Tipo_Avaliacao != ""
+       ) %>%
+       mutate(
+         # ------------------------------------------------------
+         # ENCURTAR A RESPOSTA
+         # ------------------------------------------------------
+         Resposta = case_when(
+           
+           str_detect(
+             str_to_lower(
+               Gostaria_Escolhido_Lider_Duma_Organizacao
+             ),
+             "já ocupo uma posição de líder"
+           ) ~ "Já sou líder",
+           
+           TRUE ~ str_squish(
+             Gostaria_Escolhido_Lider_Duma_Organizacao
+           )
+         )
+       ) %>%
+       
+       count(
+         Tipo_Avaliacao,
+         Resposta,
+         name = "Total"
+       ) %>%
+       
+       group_by(Tipo_Avaliacao) %>%
+       
+       mutate(
+         Percentagem = Total / sum(Total) * 100,
+         
+         # Apenas percentagem dentro da barra
+         label = paste0(
+           round(Percentagem, 1),
+           "%"
+         )
+       ) %>%
+       
+       ungroup()
+     
+     
+     # ==========================================================
+     # ORDEM DAS RESPOSTAS
+     # ==========================================================
+     
+     df_resumo$Resposta <- factor(
+       df_resumo$Resposta,
+       levels = c(
+         "Já sou líder",
+         "Sim",
+         "Provavelmente sim",
+         "Provavelmente não",
+         "Não"
+       )
+     )
+     
+     
+     # ==========================================================
+     # GRÁFICO
+     # ==========================================================
+     
+     p <- ggplot(
+       df_resumo,
+       aes(
+         x = Tipo_Avaliacao,
+         y = Percentagem,
+         fill = Resposta,
+         
+         # ------------------------------------------------------
+         # TOOLTIP
+         # ------------------------------------------------------
+         text = paste0(
+           "Tipo de avaliação: ",
+           Tipo_Avaliacao,
+           "<br>Resposta: ",
+           Resposta,
+           "<br>N = ",
+           Total,
+           "<br>Percentagem = ",
+           round(Percentagem, 1),
+           "%"
+         )
+       )
+     ) +
+       
+       # --------------------------------------------------------
+     # BARRA 100%
+     # --------------------------------------------------------
+     
+     geom_col(
+       position = "stack",
+       width = 0.65
+     ) +
+       
+       # --------------------------------------------------------
+     # PERCENTAGENS DENTRO DAS BARRAS
+     # --------------------------------------------------------
+     
+     geom_text(
+       aes(
+         label = label
+       ),
+       position = position_stack(
+         vjust = 0.5
+       ),
+       size = 3.5
+     ) +
+       
+       # --------------------------------------------------------
+     # EIXO Y
+     # --------------------------------------------------------
+     
+     scale_y_continuous(
+       limits = c(0, 100),
+       breaks = seq(0, 100, 20),
+       labels = function(x) {
+         paste0(x, "%")
+       }
+     ) +
+       
+       # --------------------------------------------------------
+     # CORES
+     # --------------------------------------------------------
+     
+     scale_fill_manual(
+       values = c(
+         "Sim" = "#ffc107",
+         "Provavelmente sim" = "#F77333",
+         "Já sou líder" = "#9442d4",
+         "Provavelmente não" = "#42A5F5",
+         "Não" = "#69C7BE"
+       )
+     ) +
+       
+       # --------------------------------------------------------
+     # TÍTULOS
+     # --------------------------------------------------------
+     
+     labs(
+       x = "",
+       y = "Percentagem",
+       fill = "Resposta"
+     ) +
+       
+       # --------------------------------------------------------
+     # TEMA
+     # --------------------------------------------------------
+     
+     theme_minimal() +
+       
+       theme(
+         
+         plot.background = element_rect(
+           fill = "#f5f3f4",
+           colour = NA
+         ),
+         
+         panel.background = element_rect(
+           fill = "#f5f3f4",
+           colour = NA
+         ),
+         
+         panel.grid.minor = element_blank(),
+         
+         axis.text.x = element_text(
+           size = 10
+         ),
+         
+         axis.text.y = element_text(
+           size = 9
+         ),
+         
+         legend.title = element_text(
+           face = "bold"
+         ),
+         
+         # Legenda por baixo
+         legend.position = "bottom",
+         
+         legend.direction = "horizontal",
+         
+         legend.justification = "center"
+       )
+     
+     
+     # ==========================================================
+     # PLOTLY
+     # ==========================================================
+     
+     ggplotly(
+       p,
+       tooltip = "text"
+     ) %>%
+       
+       layout(
+         paper_bgcolor = "#f5f3f4",
+         plot_bgcolor = "#f5f3f4"
+       )
+   })
+   
+   
+   # ============================================================
+   # LEITURA - DESEJO DE SER ESCOLHIDO PARA LIDERANÇA
+   # ============================================================
+   
+   output$leitura_deseja_lideranca <- renderUI({
+     
+     df <- dados()
+     
+     req(nrow(df) > 0)
+     
+     
+     # ==========================================================
+     # PREPARAR DADOS
+     # ==========================================================
+     
+     resumo <- df %>%
+       filter(
+         !is.na(Gostaria_Escolhido_Lider_Duma_Organizacao),
+         Gostaria_Escolhido_Lider_Duma_Organizacao != "",
+         !is.na(Tipo_Avaliacao),
+         Tipo_Avaliacao != ""
+       ) %>%
+       
+       mutate(
+         
+         # ------------------------------------------------------
+         # ENCURTAR A RESPOSTA
+         # ------------------------------------------------------
+         
+         Resposta = case_when(
+           
+           str_detect(
+             str_to_lower(
+               Gostaria_Escolhido_Lider_Duma_Organizacao
+             ),
+             "já ocupo uma posição de líder"
+           ) ~ "Já sou líder",
+           
+           TRUE ~ str_squish(
+             Gostaria_Escolhido_Lider_Duma_Organizacao
+           )
+         )
+       ) %>%
+       
+       count(
+         Tipo_Avaliacao,
+         Resposta,
+         name = "Total"
+       ) %>%
+       
+       group_by(Tipo_Avaliacao) %>%
+       
+       mutate(
+         Percentagem = Total / sum(Total) * 100
+       ) %>%
+       
+       ungroup()
+     
+     
+     req(nrow(resumo) > 0)
+     
+     
+     # ==========================================================
+     # ORDEM DA LEITURA
+     # ==========================================================
+     
+     resumo$Resposta <- factor(
+       resumo$Resposta,
+       levels = c(
+         "Já sou líder",
+         "Sim",
+         "Provavelmente sim",
+         "Provavelmente não",
+         "Não"
+       )
+     )
+     
+     
+     # ==========================================================
+     # CRIAR TEXTO POR TIPO DE AVALIAÇÃO
+     # ==========================================================
+     
+     leituras <- resumo %>%
+       
+       arrange(
+         Tipo_Avaliacao,
+         Resposta
+       ) %>%
+       
+       group_by(Tipo_Avaliacao) %>%
+       
+       summarise(
+         
+         texto = paste0(
+           
+           "<b>",
+           first(Tipo_Avaliacao),
+           "</b>: ",
+           
+           paste0(
+             Resposta,
+             " = ",
+             Total,
+             " (",
+             round(Percentagem, 1),
+             "%)",
+             collapse = "; "
+           )
+         ),
+         
+         .groups = "drop"
+       )
+     
+     
+     # ==========================================================
+     # APRESENTAR LEITURA
+     # ==========================================================
+     
+     div(
+       
+       class = "box-leitura",
+       
+       HTML(
+         paste0(
+           
+           "<b>Gostaria de alguma vez ser escolhido para ser líder duma organização (professional/negócio, escola, político, organização comunitária, etc.)?:</b> ",
+           
+           paste(
+             leituras$texto,
+             collapse = ". "
+           ),
+           
+           "."
+         )
+       )
+     )
+   })
+   
+   output$grafico_mulheres_lideranca <- renderPlotly({
+     
+     df <- dados()
+     
+     req(nrow(df) > 0)
+     
+     df_resumo <- df %>%
+       filter(
+         !is.na(Mulheres_Selecionadas_Para_Posicao_Lideranca),
+         Mulheres_Selecionadas_Para_Posicao_Lideranca != "",
+         !is.na(Tipo_Avaliacao),
+         Tipo_Avaliacao != ""
+       ) %>%
+       mutate(
+         Resposta = str_squish(
+           Mulheres_Selecionadas_Para_Posicao_Lideranca
+         )
+       ) %>%
+       count(
+         Tipo_Avaliacao,
+         Resposta,
+         name = "Total"
+       ) %>%
+       group_by(Tipo_Avaliacao) %>%
+       mutate(
+         Percentagem = Total / sum(Total) * 100,
+         label = paste0(
+           round(Percentagem, 1),
+           "%"
+         )
+       ) %>%
+       ungroup()
+     
+     
+     # ----------------------------------------------------------
+     # ORDEM DA BARRA
+     # ----------------------------------------------------------
+     
+     df_resumo$Resposta <- factor(
+       df_resumo$Resposta,
+       levels = c(
+         "Frequentemente",
+         "Algumas vezes",
+         "Raramente",
+         "Nunca"
+       )
+     )
+     
+     
+     # ----------------------------------------------------------
+     # GRÁFICO
+     # ----------------------------------------------------------
+     
+     p <- ggplot(
+       df_resumo,
+       aes(
+         x = Tipo_Avaliacao,
+         y = Percentagem,
+         fill = Resposta,
+         text = paste0(
+           "Tipo de avaliação: ",
+           Tipo_Avaliacao,
+           "<br>Resposta: ",
+           Resposta,
+           "<br>N = ",
+           Total,
+           "<br>Percentagem = ",
+           round(Percentagem, 1),
+           "%"
+         )
+       )
+     ) +
+       
+       geom_col(
+         position = "stack",
+         width = 0.65
+       ) +
+       
+       geom_text(
+         aes(label = label),
+         position = position_stack(vjust = 0.5),
+         size = 3.5
+       ) +
+       
+       scale_y_continuous(
+         limits = c(0, 100),
+         breaks = seq(0, 100, 20),
+         labels = function(x) paste0(x, "%")
+       ) +
+       
+       scale_fill_manual(
+         values = c(
+           "Frequentemente" = "#ffc107",
+           "Algumas vezes" = "#F77333",
+           "Raramente" = "#42A5F5",
+           "Nunca" = "#69C7BE"
+         )
+       ) +
+       
+       labs(
+         x = "",
+         y = "Percentagem",
+         fill = "Frequência"
+       ) +
+       
+       theme_minimal() +
+       
+       theme(
+         plot.background = element_rect(
+           fill = "#f5f3f4",
+           colour = NA
+         ),
+         panel.background = element_rect(
+           fill = "#f5f3f4",
+           colour = NA
+         ),
+         panel.grid.minor = element_blank(),
+         axis.text.x = element_text(size = 10),
+         axis.text.y = element_text(size = 9),
+         legend.title = element_text(face = "bold"),
+         legend.position = "bottom",
+         legend.direction = "horizontal",
+         legend.justification = "center"
+       )
+     
+     
+     ggplotly(
+       p,
+       tooltip = "text"
+     ) %>%
+       layout(
+         paper_bgcolor = "#f5f3f4",
+         plot_bgcolor = "#f5f3f4"
+       )
+   })
+   
+   
+   # ============================================================
+   # LEITURA - MULHERES SELECIONADAS PARA LIDERANÇA
+   # ============================================================
+   
+   output$leitura_mulheres_lideranca <- renderUI({
+     
+     df <- dados()
+     
+     req(nrow(df) > 0)
+     
+     resumo <- df %>%
+       filter(
+         !is.na(Mulheres_Selecionadas_Para_Posicao_Lideranca),
+         Mulheres_Selecionadas_Para_Posicao_Lideranca != "",
+         !is.na(Tipo_Avaliacao),
+         Tipo_Avaliacao != ""
+       ) %>%
+       mutate(
+         Resposta = str_squish(
+           Mulheres_Selecionadas_Para_Posicao_Lideranca
+         )
+       ) %>%
+       count(
+         Tipo_Avaliacao,
+         Resposta,
+         name = "Total"
+       ) %>%
+       group_by(Tipo_Avaliacao) %>%
+       mutate(
+         Percentagem = Total / sum(Total) * 100
+       ) %>%
+       ungroup()
+     
+     req(nrow(resumo) > 0)
+     
+     resumo$Resposta <- factor(
+       resumo$Resposta,
+       levels = c(
+         "Nunca",
+         "Raramente",
+         "Algumas vezes",
+         "Frequentemente"
+       )
+     )
+     
+     leituras <- resumo %>%
+       arrange(Tipo_Avaliacao, Resposta) %>%
+       group_by(Tipo_Avaliacao) %>%
+       summarise(
+         texto = paste0(
+           "<b>",
+           first(Tipo_Avaliacao),
+           "</b>: ",
+           paste0(
+             Resposta,
+             " = ",
+             Total,
+             " (",
+             round(Percentagem, 1),
+             "%)",
+             collapse = "; "
+           )
+         ),
+         .groups = "drop"
+       )
+     
+     div(
+       class = "box-leitura",
+       HTML(
+         paste0(
+           "<b>Aqui na sua comunidade com que frequência as mulheres são selecionadas 
+           para posições de liderança em organizações (professional/negócio, inclusão de pequenas empresas, escola, 
+           político, organização comunitária, etc.)?:</b> ",
+           paste(leituras$texto, collapse = ". "),
+           "."
+         )
+       )
+     )
+   })
+   
+   # ============================================================
+   # GRÁFICO - APROVARIA UMA MULHER SELECIONADA PARA LIDERAR
+   # ============================================================
+   
+   output$grafico_aprovaria_mulher_liderar <- renderPlotly({
+     
+     df <- dados()
+     
+     req(nrow(df) > 0)
+     
+     df_resumo <- df %>%
+       filter(
+         !is.na(Aprovaria_Uma_Mulher_Selecionada_Para_Liderar),
+         Aprovaria_Uma_Mulher_Selecionada_Para_Liderar != "",
+         !is.na(Tipo_Avaliacao),
+         Tipo_Avaliacao != ""
+       ) %>%
+       mutate(
+         Resposta = str_squish(
+           Aprovaria_Uma_Mulher_Selecionada_Para_Liderar
+         )
+       ) %>%
+       count(
+         Tipo_Avaliacao,
+         Resposta,
+         name = "Total"
+       ) %>%
+       group_by(Tipo_Avaliacao) %>%
+       mutate(
+         Percentagem = Total / sum(Total) * 100,
+         label = paste0(
+           round(Percentagem, 1),
+           "%"
+         )
+       ) %>%
+       ungroup()
+
+     df_resumo$Resposta <- factor(
+       df_resumo$Resposta,
+       levels = c(
+         "Aprovo totalmente",
+         "Aprovo moderadamente",
+         "Não aprovo nem desaprovo",
+         "Desaprovo moderadamente",
+         "Desaprovo totalmente"
+       )
+     )
+     
+     p <- ggplot(
+       df_resumo,
+       aes(
+         x = Tipo_Avaliacao,
+         y = Percentagem,
+         fill = Resposta,
+         text = paste0(
+           "Tipo de avaliação: ", Tipo_Avaliacao,
+           "<br>Resposta: ", Resposta,
+           "<br>N = ", Total,
+           "<br>Percentagem = ",
+           round(Percentagem, 1), "%"
+         )
+       )
+     ) +
+       geom_col(
+         position = "stack",
+         width = 0.65
+       ) +
+       geom_text(
+         aes(label = label),
+         position = position_stack(vjust = 0.5),
+         size = 3.5
+       ) +
+       scale_y_continuous(
+         limits = c(0, 100),
+         breaks = seq(0, 100, 20),
+         labels = function(x) paste0(x, "%")
+       ) +
+       scale_fill_manual(
+         values = c(
+           "Aprovo totalmente" = "#ffc107",
+           "Aprovo moderadamente" = "#F77333",
+           "Não aprovo nem desaprovo" = "#BDBDBD",
+           "Desaprovo moderadamente" = "#42A5F5",
+           "Desaprovo totalmente" = "#69C7BE"
+         )
+       ) +
+       labs(
+         x = "",
+         y = "Percentagem",
+         fill = "Resposta"
+       ) +
+       theme_minimal() +
+       theme(
+         plot.background = element_rect(
+           fill = "#f5f3f4",
+           colour = NA
+         ),
+         panel.background = element_rect(
+           fill = "#f5f3f4",
+           colour = NA
+         ),
+         panel.grid.minor = element_blank(),
+         legend.position = "bottom",
+         legend.direction = "horizontal"
+       )
+     
+     
+     ggplotly(
+       p,
+       tooltip = "text"
+     ) %>%
+       layout(
+         paper_bgcolor = "#f5f3f4",
+         plot_bgcolor = "#f5f3f4"
+       )
+   })
+   
+   
+   # ============================================================
+   # LEITURA
+   # ============================================================
+   
+   output$leitura_aprovaria_mulher_liderar <- renderUI({
+     
+     df <- dados()
+     
+     req(nrow(df) > 0)
+     
+     resumo <- df %>%
+       filter(
+         !is.na(Aprovaria_Uma_Mulher_Selecionada_Para_Liderar),
+         Aprovaria_Uma_Mulher_Selecionada_Para_Liderar != "",
+         !is.na(Tipo_Avaliacao),
+         Tipo_Avaliacao != ""
+       ) %>%
+       mutate(
+         Resposta = str_squish(
+           Aprovaria_Uma_Mulher_Selecionada_Para_Liderar
+         )
+       ) %>%
+       count(
+         Tipo_Avaliacao,
+         Resposta,
+         name = "Total"
+       ) %>%
+       group_by(Tipo_Avaliacao) %>%
+       mutate(
+         Percentagem = Total / sum(Total) * 100
+       ) %>%
+       ungroup()
+     
+     
+     resumo$Resposta <- factor(
+       resumo$Resposta,
+       levels = c(
+         "Desaprovo totalmente",
+         "Desaprovo moderadamente",
+         "Não aprovo nem desaprovo",
+         "Aprovo moderadamente",
+         "Aprovo totalmente"
+       )
+     )
+     
+     
+     leituras <- resumo %>%
+       arrange(
+         Tipo_Avaliacao,
+         Resposta
+       ) %>%
+       group_by(Tipo_Avaliacao) %>%
+       summarise(
+         texto = paste0(
+           "<b>",
+           first(Tipo_Avaliacao),
+           "</b>: ",
+           paste0(
+             Resposta,
+             " = ",
+             Total,
+             " (",
+             round(Percentagem, 1),
+             "%)",
+             collapse = "; "
+           )
+         ),
+         .groups = "drop"
+       )
+     
+     
+     div(
+       class = "box-leitura",
+       HTML(
+         paste0(
+           "<b>Aprovaria ou não, que uma mulher aqui na zona fosse selecionada para liderar
+uma organização? (professional/negócio, escola, político, organização comunitária, etc.):</b> ",
+           paste(
+             leituras$texto,
+             collapse = ". "
+           ),
+           "."
+         )
+       )
+     )
+   })
+   
+   # ============================================================
+   # GRÁFICO - QUANTAS PESSOAS APROVARIAM UMA MULHER PARA LIDERAR
+   # ============================================================
+   
+   output$grafico_quantas_aprovariam_mulher <- renderPlotly({
+     
+     df <- dados()
+     
+     req(nrow(df) > 0)
+     
+     df_resumo <- df %>%
+       filter(
+         !is.na(Quantas_Pessoas_Aprovariam_Uma_Mulher_LIder),
+         Quantas_Pessoas_Aprovariam_Uma_Mulher_LIder != "",
+         !is.na(Tipo_Avaliacao),
+         Tipo_Avaliacao != ""
+       ) %>%
+       mutate(
+         Resposta = str_squish(
+           Quantas_Pessoas_Aprovariam_Uma_Mulher_LIder
+         )
+       ) %>%
+       count(
+         Tipo_Avaliacao,
+         Resposta,
+         name = "Total"
+       ) %>%
+       group_by(Tipo_Avaliacao) %>%
+       mutate(
+         Percentagem = Total / sum(Total) * 100,
+         label = paste0(
+           round(Percentagem, 1),
+           "%"
+         )
+       ) %>%
+       ungroup()
+     
+     
+     # Ordem visual:
+     # Quase todos
+     # Mais que metade
+     # Cerca metade
+     # Menos de metade
+     # Muito poucas ou nenhuma
+     
+     df_resumo$Resposta <- factor(
+       df_resumo$Resposta,
+       levels = c(
+         "Quase todos",
+         "Mais que metade",
+         "Cerca metade",
+         "Menos de metade",
+         "Muito poucas ou nenhuma"
+       )
+     )
+     
+     
+     p <- ggplot(
+       df_resumo,
+       aes(
+         x = Tipo_Avaliacao,
+         y = Percentagem,
+         fill = Resposta,
+         text = paste0(
+           "Tipo de avaliação: ", Tipo_Avaliacao,
+           "<br>Resposta: ", Resposta,
+           "<br>N = ", Total,
+           "<br>Percentagem = ",
+           round(Percentagem, 1), "%"
+         )
+       )
+     ) +
+       geom_col(
+         position = "stack",
+         width = 0.65
+       ) +
+       geom_text(
+         aes(label = label),
+         position = position_stack(vjust = 0.5),
+         size = 3.5
+       ) +
+       scale_y_continuous(
+         limits = c(0, 100),
+         breaks = seq(0, 100, 20),
+         labels = function(x) paste0(x, "%")
+       ) +
+       scale_fill_manual(
+         values = c(
+           "Quase todos" = "#9442d4",
+           "Mais que metade" = "#ffc107",
+           "Cerca metade" = "#F77333",
+           "Menos de metade" = "#42A5F5",
+           "Muito poucas ou nenhuma" = "#69C7BE"
+         )
+       ) +
+       labs(
+         x = "",
+         y = "Percentagem",
+         fill = "Resposta"
+       ) +
+       theme_minimal() +
+       theme(
+         plot.background = element_rect(
+           fill = "#f5f3f4",
+           colour = NA
+         ),
+         panel.background = element_rect(
+           fill = "#f5f3f4",
+           colour = NA
+         ),
+         panel.grid.minor = element_blank(),
+         legend.position = "bottom",
+         legend.direction = "horizontal"
+       )
+     
+     
+     ggplotly(
+       p,
+       tooltip = "text"
+     ) %>%
+       layout(
+         paper_bgcolor = "#f5f3f4",
+         plot_bgcolor = "#f5f3f4"
+       )
+   })
+   
+   
+   # ============================================================
+   # LEITURA
+   # ============================================================
+   
+   output$leitura_quantas_aprovariam_mulher <- renderUI({
+     
+     df <- dados()
+     
+     req(nrow(df) > 0)
+     
+     resumo <- df %>%
+       filter(
+         !is.na(Quantas_Pessoas_Aprovariam_Uma_Mulher_LIder),
+         Quantas_Pessoas_Aprovariam_Uma_Mulher_LIder != "",
+         !is.na(Tipo_Avaliacao),
+         Tipo_Avaliacao != ""
+       ) %>%
+       mutate(
+         Resposta = str_squish(
+           Quantas_Pessoas_Aprovariam_Uma_Mulher_LIder
+         )
+       ) %>%
+       count(
+         Tipo_Avaliacao,
+         Resposta,
+         name = "Total"
+       ) %>%
+       group_by(Tipo_Avaliacao) %>%
+       mutate(
+         Percentagem = Total / sum(Total) * 100
+       ) %>%
+       ungroup()
+     
+     
+     resumo$Resposta <- factor(
+       resumo$Resposta,
+       levels = c(
+         "Quase todos",
+         "Mais que metade",
+         "Cerca metade",
+         "Menos de metade",
+         "Muito poucas ou nenhuma"
+       )
+     )
+     
+     
+     leituras <- resumo %>%
+       arrange(
+         Tipo_Avaliacao,
+         Resposta
+       ) %>%
+       group_by(Tipo_Avaliacao) %>%
+       summarise(
+         texto = paste0(
+           "<b>",
+           first(Tipo_Avaliacao),
+           "</b>: ",
+           paste0(
+             Resposta,
+             " = ",
+             Total,
+             " (",
+             round(Percentagem, 1),
+             "%)",
+             collapse = "; "
+           )
+         ),
+         .groups = "drop"
+       )
+     
+     
+     div(
+       class = "box-leitura",
+       HTML(
+         paste0(
+           "<b>Na sua opinião, quantas pessoas aqui da zona aprovariam que uma mulher fosse selecionada para liderar uma organização? (professional/negócio, escola, político, organização comunitária, etc.)?:</b> ",
+           paste(
+             leituras$texto,
+             collapse = ". "
+           ),
+           "."
+         )
+       )
+     )
+   })
+   
+   # ============================================================
+   # GRÁFICO - UMA MULHER DEVERIA ACEITAR VIOLÊNCIA DOMÉSTICA
+   # ============================================================
+   
+   output$grafico_mulher_aceitar_violencia <- renderPlotly({
+     
+     df <- dados()
+     
+     req(nrow(df) > 0)
+     
+     df_resumo <- df %>%
+       filter(
+         !is.na(Uma_Mulher_Deveria_Aceitar_Violencia_Domestica),
+         Uma_Mulher_Deveria_Aceitar_Violencia_Domestica != "",
+         !is.na(Tipo_Avaliacao),
+         Tipo_Avaliacao != ""
+       ) %>%
+       mutate(
+         Resposta = str_squish(
+           Uma_Mulher_Deveria_Aceitar_Violencia_Domestica
+         )
+       ) %>%
+       count(
+         Tipo_Avaliacao,
+         Resposta,
+         name = "Total"
+       ) %>%
+       group_by(Tipo_Avaliacao) %>%
+       mutate(
+         Percentagem = Total / sum(Total) * 100,
+         label = paste0(
+           round(Percentagem, 1),
+           "%"
+         )
+       ) %>%
+       ungroup()
+     
+     df_resumo$Resposta <- factor(
+       df_resumo$Resposta,
+       levels = c(
+         "Concordo totalmente",
+         "Concordo parcialmente",
+         "Não concordo, nem discordo",
+         "Discordo parcialmente",
+         "Discordo totalmente"
+       )
+     )
+     
+     
+     p <- ggplot(
+       df_resumo,
+       aes(
+         x = Tipo_Avaliacao,
+         y = Percentagem,
+         fill = Resposta,
+         text = paste0(
+           "Tipo de avaliação: ", Tipo_Avaliacao,
+           "<br>Resposta: ", Resposta,
+           "<br>N = ", Total,
+           "<br>Percentagem = ",
+           round(Percentagem, 1), "%"
+         )
+       )
+     ) +
+       geom_col(
+         position = "stack",
+         width = 0.65
+       ) +
+       geom_text(
+         aes(label = label),
+         position = position_stack(vjust = 0.5),
+         size = 3.5
+       ) +
+       scale_y_continuous(
+         limits = c(0, 100),
+         breaks = seq(0, 100, 20),
+         labels = function(x) paste0(x, "%")
+       ) +
+       scale_fill_manual(
+         values = c(
+           "Concordo totalmente" = "#ffc107",
+           "Concordo parcialmente" = "#F77333",
+           "Não concordo, nem discordo" = "#BDBDBD",
+           "Discordo parcialmente" = "#42A5F5",
+           "Discordo totalmente" = "#69C7BE"
+         )
+       ) +
+       labs(
+         x = "",
+         y = "Percentagem",
+         fill = "Resposta"
+       ) +
+       theme_minimal() +
+       theme(
+         plot.background = element_rect(
+           fill = "#f5f3f4",
+           colour = NA
+         ),
+         panel.background = element_rect(
+           fill = "#f5f3f4",
+           colour = NA
+         ),
+         panel.grid.minor = element_blank(),
+         legend.position = "bottom",
+         legend.direction = "horizontal"
+       )
+     
+     
+     ggplotly(
+       p,
+       tooltip = "text"
+     ) %>%
+       layout(
+         paper_bgcolor = "#f5f3f4",
+         plot_bgcolor = "#f5f3f4"
+       )
+   })
+   
+   
+   # ============================================================
+   # LEITURA
+   # ============================================================
+   
+   output$leitura_mulher_aceitar_violencia <- renderUI({
+     
+     df <- dados()
+     
+     req(nrow(df) > 0)
+     
+     resumo <- df %>%
+       filter(
+         !is.na(Uma_Mulher_Deveria_Aceitar_Violencia_Domestica),
+         Uma_Mulher_Deveria_Aceitar_Violencia_Domestica != "",
+         !is.na(Tipo_Avaliacao),
+         Tipo_Avaliacao != ""
+       ) %>%
+       mutate(
+         Resposta = str_squish(
+           Uma_Mulher_Deveria_Aceitar_Violencia_Domestica
+         )
+       ) %>%
+       count(
+         Tipo_Avaliacao,
+         Resposta,
+         name = "Total"
+       ) %>%
+       group_by(Tipo_Avaliacao) %>%
+       mutate(
+         Percentagem = Total / sum(Total) * 100
+       ) %>%
+       ungroup()
+     
+     
+     resumo$Resposta <- factor(
+       resumo$Resposta,
+       levels = c(
+         "Discordo totalmente",
+         "Discordo parcialmente",
+         "Não concordo, nem discordo",
+         "Concordo parcialmente",
+         "Concordo totalmente"
+       )
+     )
+     
+     
+     leituras <- resumo %>%
+       arrange(
+         Tipo_Avaliacao,
+         Resposta
+       ) %>%
+       group_by(Tipo_Avaliacao) %>%
+       summarise(
+         texto = paste0(
+           "<b>",
+           first(Tipo_Avaliacao),
+           "</b>: ",
+           paste0(
+             Resposta,
+             " = ",
+             Total,
+             " (",
+             round(Percentagem, 1),
+             "%)",
+             collapse = "; "
+           )
+         ),
+         .groups = "drop"
+       )
+     
+     
+     div(
+       class = "box-leitura",
+       HTML(
+         paste0(
+           "<b>Uma mulher deveria aceitar violência doméstica para manter a familia junta.:</b> ",
+           paste(
+             leituras$texto,
+             collapse = ". "
+           ),
+           "."
+         )
+       )
+     )
+   })
+   
+   # ============================================================
+   # GRÁFICO - VIOLÊNCIA DO HOMEM CONTRA A MULHER
+   # ============================================================
+   
+   output$grafico_homem_bate_mulher <- renderPlotly({
+     
+     df <- dados()
+     
+     req(nrow(df) > 0)
+     
+     df_resumo <- df %>%
+       filter(
+         !is.na(Se_um_homem_bate_sua_mulher_e_assunto_daquele_casal),
+         Se_um_homem_bate_sua_mulher_e_assunto_daquele_casal != "",
+         !is.na(Tipo_Avaliacao),
+         Tipo_Avaliacao != ""
+       ) %>%
+       mutate(
+         Resposta = str_squish(
+           Se_um_homem_bate_sua_mulher_e_assunto_daquele_casal
+         )
+       ) %>%
+       count(
+         Tipo_Avaliacao,
+         Resposta,
+         name = "Total"
+       ) %>%
+       group_by(Tipo_Avaliacao) %>%
+       mutate(
+         Percentagem = Total / sum(Total) * 100,
+         label = paste0(
+           round(Percentagem, 1),
+           "%"
+         )
+       ) %>%
+       ungroup()
+     
+     df_resumo$Resposta <- factor(
+       df_resumo$Resposta,
+       levels = c(
+         "Concordo totalmente",
+         "Concordo parcialmente",
+         "Não concordo, nem discordo",
+         "Discordo parcialmente",
+         "Discordo totalmente"
+         
+         
+         
+       )
+     )
+     
+     
+     p <- ggplot(
+       df_resumo,
+       aes(
+         x = Tipo_Avaliacao,
+         y = Percentagem,
+         fill = Resposta,
+         text = paste0(
+           "Tipo de avaliação: ", Tipo_Avaliacao,
+           "<br>Resposta: ", Resposta,
+           "<br>N = ", Total,
+           "<br>Percentagem = ",
+           round(Percentagem, 1), "%"
+         )
+       )
+     ) +
+       geom_col(
+         position = "stack",
+         width = 0.65
+       ) +
+       geom_text(
+         aes(label = label),
+         position = position_stack(vjust = 0.5),
+         size = 3.5
+       ) +
+       scale_y_continuous(
+         limits = c(0, 100),
+         breaks = seq(0, 100, 20),
+         labels = function(x) paste0(x, "%")
+       ) +
+       scale_fill_manual(
+         values = c(
+           "Concordo totalmente" = "#ffc107",
+           "Concordo parcialmente" = "#F77333",
+           "Não concordo, nem discordo" = "#BDBDBD",
+           "Discordo parcialmente" = "#42A5F5",
+           "Discordo totalmente" = "#69C7BE"
+         )
+       ) +
+       labs(
+         x = "",
+         y = "Percentagem",
+         fill = "Resposta"
+       ) +
+       theme_minimal() +
+       theme(
+         plot.background = element_rect(
+           fill = "#f5f3f4",
+           colour = NA
+         ),
+         panel.background = element_rect(
+           fill = "#f5f3f4",
+           colour = NA
+         ),
+         panel.grid.minor = element_blank(),
+         legend.position = "bottom",
+         legend.direction = "horizontal"
+       )
+     
+     
+     ggplotly(
+       p,
+       tooltip = "text"
+     ) %>%
+       layout(
+         paper_bgcolor = "#f5f3f4",
+         plot_bgcolor = "#f5f3f4"
+       )
+   })
+   
+   
+   # ============================================================
+   # LEITURA
+   # ============================================================
+   
+   output$leitura_homem_bate_mulher <- renderUI({
+     
+     df <- dados()
+     
+     req(nrow(df) > 0)
+     
+     resumo <- df %>%
+       filter(
+         !is.na(Se_um_homem_bate_sua_mulher_e_assunto_daquele_casal),
+         Se_um_homem_bate_sua_mulher_e_assunto_daquele_casal != "",
+         !is.na(Tipo_Avaliacao),
+         Tipo_Avaliacao != ""
+       ) %>%
+       mutate(
+         Resposta = str_squish(
+           Se_um_homem_bate_sua_mulher_e_assunto_daquele_casal
+         )
+       ) %>%
+       count(
+         Tipo_Avaliacao,
+         Resposta,
+         name = "Total"
+       ) %>%
+       group_by(Tipo_Avaliacao) %>%
+       mutate(
+         Percentagem = Total / sum(Total) * 100
+       ) %>%
+       ungroup()
+     
+     
+     resumo$Resposta <- factor(
+       resumo$Resposta,
+       levels = c(
+         "Discordo totalmente",
+         "Discordo parcialmente",
+         "Não concordo, nem discordo",
+         "Concordo parcialmente",
+         "Concordo totalmente"
+       )
+     )
+     
+     
+     leituras <- resumo %>%
+       arrange(
+         Tipo_Avaliacao,
+         Resposta
+       ) %>%
+       group_by(Tipo_Avaliacao) %>%
+       summarise(
+         texto = paste0(
+           "<b>",
+           first(Tipo_Avaliacao),
+           "</b>: ",
+           paste0(
+             Resposta,
+             " = ",
+             Total,
+             " (",
+             round(Percentagem, 1),
+             "%)",
+             collapse = "; "
+           )
+         ),
+         .groups = "drop"
+       )
+     
+     
+     div(
+       class = "box-leitura",
+       HTML(
+         paste0(
+           "<b>Se um homem bate sua mulher, isto e um assunto daquele casal e nao devem falar sobre o assunto com outras pessoas:</b> ",
+           paste(
+             leituras$texto,
+             collapse = ". "
+           ),
+           "."
+         )
+       )
+     )
+   })
+   # ========================================================
+   # EFICACIA
+   # ========================================================
+   
+   
+   # ============================================================
+   # GRÁFICO - PESSOAS PARA FALAR QUANDO SE SENTE SOZINHA
+   # ============================================================
+   
+   output$grafico_pessoas_falar_sozinha <- renderPlotly({
+     
+     df <- dados()
+     
+     req(nrow(df) > 0)
+     
+     df_resumo <- df %>%
+       filter(
+         !is.na(Pessoas_para_falar_quando_se_sente_sozinha),
+         Pessoas_para_falar_quando_se_sente_sozinha != "",
+         !is.na(Tipo_Avaliacao),
+         Tipo_Avaliacao != ""
+       ) %>%
+       mutate(
+         Resposta = case_when(
+           
+           str_detect(
+             str_to_lower(
+               Pessoas_para_falar_quando_se_sente_sozinha
+             ),
+             "^não"
+           ) ~ "Ninguém",
+           
+           str_detect(
+             str_to_lower(
+               Pessoas_para_falar_quando_se_sente_sozinha
+             ),
+             "um amigo"
+           ) ~ "Uma pessoa",
+           
+           str_detect(
+             str_to_lower(
+               Pessoas_para_falar_quando_se_sente_sozinha
+             ),
+             "algumas pessoas"
+           ) ~ "Algumas pessoas",
+           
+           str_detect(
+             str_to_lower(
+               Pessoas_para_falar_quando_se_sente_sozinha
+             ),
+             "varios amigos"
+           ) ~ "Várias pessoas",
+           
+           TRUE ~ str_squish(
+             Pessoas_para_falar_quando_se_sente_sozinha
+           )
+         )
+       ) %>%
+       count(
+         Tipo_Avaliacao,
+         Resposta,
+         name = "Total"
+       ) %>%
+       group_by(Tipo_Avaliacao) %>%
+       mutate(
+         Percentagem = Total / sum(Total) * 100,
+         label = paste0(
+           round(Percentagem, 1),
+           "%"
+         )
+       ) %>%
+       ungroup()
+     
+     
+     # Ordem visual:
+     # Várias pessoas
+     # Algumas pessoas
+     # Uma pessoa
+     # Ninguém
+     
+     df_resumo$Resposta <- factor(
+       df_resumo$Resposta,
+       levels = c(
+         "Ninguém",
+         "Uma pessoa",
+         "Algumas pessoas",
+         "Várias pessoas"
+       )
+     )
+     
+     
+     p <- ggplot(
+       df_resumo,
+       aes(
+         x = Tipo_Avaliacao,
+         y = Percentagem,
+         fill = Resposta,
+         text = paste0(
+           "Tipo de avaliação: ", Tipo_Avaliacao,
+           "<br>Resposta: ", Resposta,
+           "<br>N = ", Total,
+           "<br>Percentagem = ",
+           round(Percentagem, 1),
+           "%"
+         )
+       )
+     ) +
+       geom_col(
+         position = "stack",
+         width = 0.65
+       ) +
+       geom_text(
+         aes(label = label),
+         position = position_stack(vjust = 0.5),
+         size = 3.5
+       ) +
+       scale_y_continuous(
+         limits = c(0, 100),
+         breaks = seq(0, 100, 20),
+         labels = function(x) paste0(x, "%")
+       ) +
+       scale_fill_manual(
+         values = c(
+           "Várias pessoas" = "#ffc107",
+           "Algumas pessoas" = "#F77333",
+           "Uma pessoa" = "#42A5F5",
+           "Ninguém" = "#69C7BE"
+         )
+       ) +
+       labs(
+         x = "",
+         y = "Percentagem",
+         fill = "Resposta"
+       ) +
+       theme_minimal() +
+       theme(
+         plot.background = element_rect(
+           fill = "#f5f3f4",
+           colour = NA
+         ),
+         panel.background = element_rect(
+           fill = "#f5f3f4",
+           colour = NA
+         ),
+         panel.grid.minor = element_blank(),
+         legend.position = "bottom",
+         legend.direction = "horizontal"
+       )
+     
+     
+     ggplotly(
+       p,
+       tooltip = "text"
+     ) %>%
+       layout(
+         paper_bgcolor = "#f5f3f4",
+         plot_bgcolor = "#f5f3f4"
+       )
+   })
+   
+   
+   # ============================================================
+   # LEITURA
+   # ============================================================
+   
+   output$leitura_pessoas_falar_sozinha <- renderUI({
+     
+     df <- dados()
+     
+     req(nrow(df) > 0)
+     
+     resumo <- df %>%
+       filter(
+         !is.na(Pessoas_para_falar_quando_se_sente_sozinha),
+         Pessoas_para_falar_quando_se_sente_sozinha != "",
+         !is.na(Tipo_Avaliacao),
+         Tipo_Avaliacao != ""
+       ) %>%
+       mutate(
+         Resposta = case_when(
+           
+           str_detect(
+             str_to_lower(
+               Pessoas_para_falar_quando_se_sente_sozinha
+             ),
+             "^não"
+           ) ~ "Ninguém",
+           
+           str_detect(
+             str_to_lower(
+               Pessoas_para_falar_quando_se_sente_sozinha
+             ),
+             "um amigo"
+           ) ~ "Uma pessoa",
+           
+           str_detect(
+             str_to_lower(
+               Pessoas_para_falar_quando_se_sente_sozinha
+             ),
+             "algumas pessoas"
+           ) ~ "Algumas pessoas",
+           
+           str_detect(
+             str_to_lower(
+               Pessoas_para_falar_quando_se_sente_sozinha
+             ),
+             "varios amigos"
+           ) ~ "Várias pessoas",
+           
+           TRUE ~ str_squish(
+             Pessoas_para_falar_quando_se_sente_sozinha
+           )
+         )
+       ) %>%
+       count(
+         Tipo_Avaliacao,
+         Resposta,
+         name = "Total"
+       ) %>%
+       group_by(Tipo_Avaliacao) %>%
+       mutate(
+         Percentagem = Total / sum(Total) * 100
+       ) %>%
+       ungroup()
+     
+     
+     resumo$Resposta <- factor(
+       resumo$Resposta,
+       levels = c(
+         "Várias pessoas",
+         "Uma pessoa",
+         "Algumas pessoas",
+         "Ninguém"
+       )
+     )
+     
+     
+     leituras <- resumo %>%
+       arrange(
+         Tipo_Avaliacao,
+         Resposta
+       ) %>%
+       group_by(Tipo_Avaliacao) %>%
+       summarise(
+         texto = paste0(
+           "<b>",
+           first(Tipo_Avaliacao),
+           "</b>: ",
+           paste0(
+             Resposta,
+             " = ",
+             Total,
+             " (",
+             round(Percentagem, 1),
+             "%)",
+             collapse = "; "
+           )
+         ),
+         .groups = "drop"
+       )
+     
+     
+     div(
+       class = "box-leitura",
+       HTML(
+         paste0(
+           "<b>Se você se sentisse sozinha, tem algumas pessoas com quem poderia falar?:</b> ",
+           paste(
+             leituras$texto,
+             collapse = ". "
+           ),
+           "."
+         )
+       )
+     )
+   })
+   
+   # ============================================================
+   # GRÁFICO - PESSOAS PARA DISCUTIR PROBLEMAS
+   # ============================================================
+   
+   output$grafico_pessoas_discutir_problemas <- renderPlotly({
+     
+     df <- dados()
+     
+     req(nrow(df) > 0)
+     
+     df_resumo <- df %>%
+       filter(
+         !is.na(Pessoas_para_discutir_problemas),
+         Pessoas_para_discutir_problemas != "",
+         !is.na(Tipo_Avaliacao),
+         Tipo_Avaliacao != ""
+       ) %>%
+       mutate(
+         Resposta = case_when(
+           
+           str_detect(
+             str_to_lower(
+               Pessoas_para_discutir_problemas
+             ),
+             "^não"
+           ) ~ "Ninguém",
+           
+           str_detect(
+             str_to_lower(
+               Pessoas_para_discutir_problemas
+             ),
+             "um amigo"
+           ) ~ "Uma pessoa",
+           
+           str_detect(
+             str_to_lower(
+               Pessoas_para_discutir_problemas
+             ),
+             "alguns"
+           ) ~ "Algumas pessoas",
+           
+           str_detect(
+             str_to_lower(
+               Pessoas_para_discutir_problemas
+             ),
+             "varios amigos"
+           ) ~ "Várias pessoas",
+           
+           TRUE ~ str_squish(
+             Pessoas_para_discutir_problemas
+           )
+         )
+       ) %>%
+       count(
+         Tipo_Avaliacao,
+         Resposta,
+         name = "Total"
+       ) %>%
+       group_by(Tipo_Avaliacao) %>%
+       mutate(
+         Percentagem = Total / sum(Total) * 100,
+         label = paste0(
+           round(Percentagem, 1),
+           "%"
+         )
+       ) %>%
+       ungroup()
+     
+     
+     df_resumo$Resposta <- factor(
+       df_resumo$Resposta,
+       levels = c(
+         "Várias pessoas",
+         "Algumas pessoas",
+         "Uma pessoa",
+         "Ninguém"
+       )
+     )
+     
+     
+     p <- ggplot(
+       df_resumo,
+       aes(
+         x = Tipo_Avaliacao,
+         y = Percentagem,
+         fill = Resposta,
+         text = paste0(
+           "Tipo de avaliação: ", Tipo_Avaliacao,
+           "<br>Resposta: ", Resposta,
+           "<br>N = ", Total,
+           "<br>Percentagem = ",
+           round(Percentagem, 1),
+           "%"
+         )
+       )
+     ) +
+       geom_col(
+         position = "stack",
+         width = 0.65
+       ) +
+       geom_text(
+         aes(label = label),
+         position = position_stack(vjust = 0.5),
+         size = 3.5
+       ) +
+       scale_y_continuous(
+         limits = c(0, 100),
+         breaks = seq(0, 100, 20),
+         labels = function(x) paste0(x, "%")
+       ) +
+       scale_fill_manual(
+         values = c(
+           "Várias pessoas" = "#ffc107",
+           "Algumas pessoas" = "#F77333",
+           "Uma pessoa" = "#42A5F5",
+           "Ninguém" = "#69C7BE"
+         )
+       ) +
+       labs(
+         x = "",
+         y = "Percentagem",
+         fill = "Resposta"
+       ) +
+       theme_minimal() +
+       theme(
+         plot.background = element_rect(
+           fill = "#f5f3f4",
+           colour = NA
+         ),
+         panel.background = element_rect(
+           fill = "#f5f3f4",
+           colour = NA
+         ),
+         panel.grid.minor = element_blank(),
+         legend.position = "bottom",
+         legend.direction = "horizontal"
+       )
+     
+     
+     ggplotly(
+       p,
+       tooltip = "text"
+     ) %>%
+       layout(
+         paper_bgcolor = "#f5f3f4",
+         plot_bgcolor = "#f5f3f4"
+       )
+   })
+   
+   
+   # ============================================================
+   # LEITURA
+   # ============================================================
+   
+   output$leitura_pessoas_discutir_problemas <- renderUI({
+     
+     df <- dados()
+     
+     req(nrow(df) > 0)
+     
+     resumo <- df %>%
+       filter(
+         !is.na(Pessoas_para_discutir_problemas),
+         Pessoas_para_discutir_problemas != "",
+         !is.na(Tipo_Avaliacao),
+         Tipo_Avaliacao != ""
+       ) %>%
+       mutate(
+         Resposta = case_when(
+           
+           str_detect(
+             str_to_lower(
+               Pessoas_para_discutir_problemas
+             ),
+             "^não"
+           ) ~ "Ninguém",
+           
+           str_detect(
+             str_to_lower(
+               Pessoas_para_discutir_problemas
+             ),
+             "um amigo"
+           ) ~ "Uma pessoa",
+           
+           str_detect(
+             str_to_lower(
+               Pessoas_para_discutir_problemas
+             ),
+             "alguns"
+           ) ~ "Algumas pessoas",
+           
+           str_detect(
+             str_to_lower(
+               Pessoas_para_discutir_problemas
+             ),
+             "varios amigos"
+           ) ~ "Várias pessoas",
+           
+           TRUE ~ str_squish(
+             Pessoas_para_discutir_problemas
+           )
+         )
+       ) %>%
+       count(
+         Tipo_Avaliacao,
+         Resposta,
+         name = "Total"
+       ) %>%
+       group_by(Tipo_Avaliacao) %>%
+       mutate(
+         Percentagem = Total / sum(Total) * 100
+       ) %>%
+       ungroup()
+     
+     
+     resumo$Resposta <- factor(
+       resumo$Resposta,
+       levels = c(
+         "Ninguém",
+         "Uma pessoa",
+         "Algumas pessoas",
+         "Várias pessoas"
+       )
+     )
+     
+     
+     leituras <- resumo %>%
+       arrange(
+         Tipo_Avaliacao,
+         Resposta
+       ) %>%
+       group_by(Tipo_Avaliacao) %>%
+       summarise(
+         texto = paste0(
+           "<b>",
+           first(Tipo_Avaliacao),
+           "</b>: ",
+           paste0(
+             Resposta,
+             " = ",
+             Total,
+             " (",
+             round(Percentagem, 1),
+             "%)",
+             collapse = "; "
+           )
+         ),
+         .groups = "drop"
+       )
+     
+     
+     div(
+       class = "box-leitura",
+       HTML(
+         paste0(
+           "<b>Se você tivesse um problema (por exemplo com seu namorado, marido, sogra, mãe), tem alguma pessoa com quem pode discutir?:</b> ",
+           paste(
+             leituras$texto,
+             collapse = ". "
+           ),
+           "."
+         )
+       )
+     )
+   })
+   
   # ========================================================
   # OCEAN GUARD (PLACEHOLDER – ajustar depois)
   # ========================================================
