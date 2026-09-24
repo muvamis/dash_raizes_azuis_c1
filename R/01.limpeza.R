@@ -65,7 +65,21 @@ Baseline_Raizes <- Baseline_Raizes %>%
     Se_um_homem_bate_sua_mulher_e_assunto_daquele_casal = `tolerancia violencia domest2`,
     Pessoas_para_falar_quando_se_sente_sozinha = `pessoas para fazer compania...53`,
     Pessoas_para_discutir_problemas = `pessoas para fazer compania...54`,
-    
+    Eu_tenho_amigos_com_quem_posso_compartilhar_alegrias_tristezas = `amigos com quem posso partilhar`,
+    Eu_posso_discutir_meus_problemas_com_meus_amigos = `posso discutir os meus problemas`,
+    Os_meus_amigos_familiares_dao_me_apoio_que_preciso = `Os meus amigos e familiares dão-me o apoio de que preciso.`,
+    A_minha_familia_pode_me_ajudar_tomar_decisoes = `A minha família pode me ajudar a tomar decisões.`,
+    Eu_sinto_que_sou_uma_pessoa_valor_quanto_outras_pessoas = `Eu sinto que sou uma pessoa de valor, no mínimo tanto quanto as outras pessoas.`,
+    As_vezes_acho_que_nao_presto_para_nada = `Às vezes acho que não presto para nada.   (INVERSO — alta agência = discordar)`,
+    Eu_penso_que_sou_uma_pessoa_fracassada = `Levando tudo em conta, eu penso que sou uma pessoa fracassada.   (INVERSO — alta`,
+    Eu_acho_que_tenho_varias_boas_qualidades = `Eu acho que tenho várias boas qualidades.`,
+    No_geral_estou_satisfeita_comigo_mesma = `No geral, eu estou satisfeita comigo mesma.`,
+    Expressar_minha_opiniao_minha_familia = `Expressar a minha opinião na minha família.`,
+    Expressar_minha_opiniao_mesmo_nao_concordo_com_chefe = `Expressar a minha opinião na minha família, mesmo se não concordo com o(a) chefe`,
+    Expressar_minha_opiniao_trabalho = `Expressar a minha opinião num âmbito de trabalho / serviço.`,
+    Expressar_minha_opiniao_escola = `Expressar a minha opinião se estou em desacordo com o director da escola ou com`,
+    Defender_me_se_for_tratada_injustamente = `Defender-me se for tratada injustamente (verbalmente).`,
+    Dizer_outros_pararem_quando_fazer_me_infeliz = `Dizer aos outros para pararem quando estão a fazer-me infeliz.`,
     Respeito_Pelo_Jovem_Bairro = `respeito pelo jovem no bairro`
   )
 
@@ -111,7 +125,7 @@ Baseline_Raizes <- Baseline_Raizes %>%
     )
   )
 
-table(Baseline_Raizes$Pessoas_para_discutir_problemas)
+# table(Baseline_Raizes$`especificar objetivo`)
 
 # Baseline_Raizes <- Baseline_Raizes %>%
 #   mutate(
