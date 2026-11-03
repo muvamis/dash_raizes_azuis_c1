@@ -324,7 +324,7 @@ ui <- navbarPage(
                             plotlyOutput("grafico_quem_decide", height = "650px"))
                    )
           ),
-                   
+          
           tabPanel("NORMAS SOCIAIS",
                    
                    fluidRow(
@@ -707,135 +707,139 @@ ui <- navbarPage(
                               uiOutput("leitura_expressar_infeliz")
                             ),
                             plotlyOutput("grafico_expressar_infeliz"))
-                            )
+                   )
           )
           
+        ),
+        
+      ) # fecha mainPanel da página BASELINE & ENDLINE
+    )   # fecha sidebarLayout da página BASELINE & ENDLINE
+  ),    # fecha tabPanel da página BASELINE & ENDLINE
+  
+  # ========================================================
+  # 2. OCEAN GUARD — SEGUNDA PÁGINA
+  # ========================================================
+  tabPanel(
+    "Ocean Guard",
+    
+    sidebarLayout(
+      # =====================================================
+      # 🎛️ FILTROS
+      # =====================================================
+      sidebarPanel(
+        
+        selectInput(
+          "pescador",
+          "Pescador:",
+          choices = c("Todos", sort(unique(dados_ocean$pescador)))
+        ),
+        
+        selectInput(
+          "centro",
+          "Centro de Pesca:",
+          choices = c("Todos", sort(unique(dados_ocean$centro_pesca)))
+        ),
+        
+        selectInput(
+          "arte",
+          "Tipo de Arte:",
+          choices = c("Todos", sort(unique(dados_ocean$tipo_arte)))
+        ),
+        
+        selectInput(
+          "mare",
+          "Tipo de Maré:",
+          choices = c("Todas", sort(unique(dados_ocean$tipo_mare)))
+        )
+      ), # fecha sidebarPanel
+      
+      # =====================================================
+      # 📊 MAIN PANEL
+      # =====================================================
+      mainPanel(
+        
+        # =========================
+        # VALUE BOXES (KPIs)
+        # =========================
+        div(class = "value-box-container",
+            
+            div(class = "value-box blue",
+                h3(textOutput("kpi_capturas")),
+                p("Total de Registos")
+            ),
+            
+            div(class = "value-box green",
+                h3(textOutput("kpi_peso")),
+                p("Peso Total (Kg)")
+            ),
+            
+            div(class = "value-box orange",
+                h3(textOutput("kpi_especies")),
+                p("Espécies")
+            ),
+            
+            div(class = "value-box yellow",
+                h3(textOutput("kpi_pescadores")),
+                p("Pescadores")
+            )
+        ),
+        
+        br(),
+        
+        # =========================
+        # GRÁFICOS 1
+        # =========================
+        fluidRow(
+          
+          column(
+            6,
+            plotlyOutput("grafico_especies", height = "380px")
+          ),
+          
+          column(
+            6,
+            plotlyOutput("grafico_artes", height = "380px")
+          )
+        ),
+        
+        br(),
+        
+        # =========================
+        # GRÁFICOS 2
+        # =========================
+        fluidRow(
+          
+          column(
+            6,
+            plotlyOutput("grafico_mare", height = "380px")
+          ),
+          
+          column(
+            6,
+            plotlyOutput("grafico_embarcacao", height = "380px")
+          )
+        ),
+        
+        br(),
+        
+        # =========================
+        # EXTRA (OPCIONAL MAS RECOMENDADO)
+        # =========================
+        fluidRow(
+          
+          column(
+            12,
+            plotlyOutput("grafico_pescadores", height = "420px")
+          )
         )
       )
     )
-  )
-)
-
-#   
-#   # ========================================================
-#   # 3. OCEAN GUARD
-#   # ========================================================
-#   tabPanel(
-#     "Ocean Guard",
-#     
-#     # =====================================================
-#     # 🎛️ FILTROS
-#     # =====================================================
-#     sidebarPanel(
-#       
-#       selectInput(
-#         "pescador",
-#         "Pescador:",
-#         choices = c("Todos", sort(unique(dados_ocean$pescador)))
-#       ),
-#       
-#       selectInput(
-#         "centro",
-#         "Centro de Pesca:",
-#         choices = c("Todos", sort(unique(dados_ocean$centro_pesca)))
-#       ),
-#       
-#       selectInput(
-#         "arte",
-#         "Tipo de Arte:",
-#         choices = c("Todos", sort(unique(dados_ocean$tipo_arte)))
-#       ),
-#       
-#       selectInput(
-#         "mare",
-#         "Tipo de Maré:",
-#         choices = c("Todas", sort(unique(dados_ocean$tipo_mare)))
-#       )
-#     ),
-#     
-#     # =====================================================
-#     # 📊 MAIN PANEL
-#     # =====================================================
-#     mainPanel(
-#       
-#       # =========================
-#       # VALUE BOXES (KPIs)
-#       # =========================
-#       div(class = "value-box-container",
-#           
-#           div(class = "value-box blue",
-#               h3(textOutput("kpi_capturas")),
-#               p("Total de Registos")
-#           ),
-#           
-#           div(class = "value-box green",
-#               h3(textOutput("kpi_peso")),
-#               p("Peso Total (Kg)")
-#           ),
-#           
-#           div(class = "value-box orange",
-#               h3(textOutput("kpi_especies")),
-#               p("Espécies")
-#           ),
-#           
-#           div(class = "value-box yellow",
-#               h3(textOutput("kpi_pescadores")),
-#               p("Pescadores")
-#           )
-#       ),
-#       
-#       br(),
-#       
-#       # =========================
-#       # GRÁFICOS 1
-#       # =========================
-#       fluidRow(
-#         
-#         column(
-#           6,
-#           plotlyOutput("grafico_especies", height = "380px")
-#         ),
-#         
-#         column(
-#           6,
-#           plotlyOutput("grafico_artes", height = "380px")
-#         )
-#       ),
-#       
-#       br(),
-#       
-#       # =========================
-#       # GRÁFICOS 2
-#       # =========================
-#       fluidRow(
-#         
-#         column(
-#           6,
-#           plotlyOutput("grafico_mare", height = "380px")
-#         ),
-#         
-#         column(
-#           6,
-#           plotlyOutput("grafico_embarcacao", height = "380px")
-#         )
-#       ),
-#       
-#       br(),
-#       
-#       # =========================
-#       # EXTRA (OPCIONAL MAS RECOMENDADO)
-#       # =========================
-#       fluidRow(
-#         
-#         column(
-#           12,
-#           plotlyOutput("grafico_pescadores", height = "420px")
-#         )
-#       )
-#     )
-#   )
+  )       # fecha mainPanel do Ocean Guard
+)         # fecha sidebarLayout do Ocean Guard
+# )           # fecha tabPanel do Ocean Guard
+# )             # fecha navbarPage
 # )
-
+# )
 # ==========================================================
 # SERVER
 # ==========================================================
@@ -9529,187 +9533,187 @@ uma organização? (professional/negócio, escola, político, organização comu
   # OCEAN GUARD (PLACEHOLDER – ajustar depois)
   # ========================================================
   # 
-  # dados_filtrados <- reactive({
-  #   
-  #   df <- dados_ocean
-  #   
-  #   if (!is.null(input$pescador) && input$pescador != "Todos") {
-  #     df <- df %>% dplyr::filter(pescador == input$pescador)
-  #   }
-  #   
-  #   if (!is.null(input$centro) && input$centro != "Todos") {
-  #     df <- df %>% dplyr::filter(centro_pesca == input$centro)
-  #   }
-  #   
-  #   if (!is.null(input$arte) && input$arte != "Todos") {
-  #     df <- df %>% dplyr::filter(tipo_arte == input$arte)
-  #   }
-  #   
-  #   if (!is.null(input$mare) && input$mare != "Todas") {
-  #     df <- df %>% dplyr::filter(tipo_mare == input$mare)
-  #   }
-  #   
-  #   df
-  # })
-  # 
-  # # =====================================================
-  # # 📌 KPIs
-  # # =====================================================
-  # 
-  # output$kpi_capturas <- renderText({
-  #   format(nrow(dados_filtrados()), big.mark = ",")
-  # })
-  # 
-  # output$kpi_peso <- renderText({
-  #   round(sum(dados_filtrados()$peso_gramas, na.rm = TRUE) / 1000, 1)
-  # })
-  # 
-  # output$kpi_especies <- renderText({
-  #   n_distinct(dados_filtrados()$latin_name)
-  # })
-  # 
-  # output$kpi_pescadores <- renderText({
-  #   n_distinct(dados_filtrados()$pescador)
-  # })
-  # 
-  # # =====================================================
-  # # 🐟 TOP ESPÉCIES
-  # # =====================================================
-  # 
-  # output$grafico_especies <- renderPlotly({
-  #   
-  #   df <- dados_filtrados() %>%
-  #     group_by(xitswa_name) %>%
-  #     summarise(peso_total = sum(peso_gramas, na.rm = TRUE), .groups = "drop") %>%
-  #     arrange(desc(peso_total)) %>%
-  #     slice_head(n = 10)
-  #   
-  #   plotly::plot_ly(
-  #     df,
-  #     x = ~reorder(xitswa_name, peso_total),
-  #     y = ~peso_total,
-  #     type = "bar",
-  #     text = ~format(peso_total, big.mark = ","),
-  #     textposition = "outside"
-  #   ) %>%
-  #     layout(
-  #       title = list(text = ""),
-  #       paper_bgcolor = "#f5f3f4",
-  #       plot_bgcolor = "#f5f3f4",
-  #       xaxis = list(title = "Espécie", tickangle = -25),
-  #       yaxis = list(title = "Peso (gramas)"),
-  #       barmode = "stack"
-  #     )
-  # })
-  # 
-  # # =====================================================
-  # # 🎣 TIPO DE ARTE
-  # # =====================================================
-  # 
-  # output$grafico_artes <- renderPlotly({
-  #   
-  #   df <- dados_filtrados() %>% count(tipo_arte)
-  #   
-  #   plotly::plot_ly(
-  #     df,
-  #     labels = ~tipo_arte,
-  #     values = ~n,
-  #     type = "pie"
-  #   ) %>%
-  #     layout(
-  #       title = list(text = ""),
-  #       
-  #       paper_bgcolor = "#f5f3f4",
-  #       plot_bgcolor = "#f5f3f4",
-  #       
-  #       legend = list(title = list(text = "<b>Tipo de Arte</b>"))
-  #     )
-  # })
-  # 
-  # # =====================================================
-  # # 🌊 MARÉ
-  # # =====================================================
-  # 
-  # output$grafico_mare <- renderPlotly({
-  #   
-  #   df <- dados_filtrados() %>%
-  #     group_by(tipo_mare) %>%
-  #     summarise(peso_total = sum(peso_gramas, na.rm = TRUE), .groups = "drop")
-  #   
-  #   plotly::plot_ly(
-  #     df,
-  #     x = ~tipo_mare,
-  #     y = ~peso_total,
-  #     type = "bar",
-  #     text = ~format(peso_total, big.mark = ","),
-  #     textposition = "outside"
-  #   ) %>%
-  #     layout(
-  #       title = list(text = ""),
-  #       paper_bgcolor = "#f5f3f4",
-  #       plot_bgcolor = "#f5f3f4",
-  #       xaxis = list(title = "Maré", tickangle = -25),
-  #       yaxis = list(title = "Peso Total"),
-  #       barmode = "stack"
-  #     )
-  # })
-  # 
-  # # =====================================================
-  # # 🧭 EMBARCAÇÃO (EXTRA OPCIONAL)
-  # # =====================================================
-  # 
-  # output$grafico_embarcacao <- renderPlotly({
-  #   
-  #   df <- dados_filtrados() %>%
-  #     group_by(pescador) %>%
-  #     summarise(peso_total = sum(peso_gramas, na.rm = TRUE), .groups = "drop")
-  #   
-  #   plotly::plot_ly(
-  #     df,
-  #     x = ~pescador,
-  #     y = ~peso_total,
-  #     type = "bar",
-  #     text = ~format(peso_total, big.mark = ","),
-  #     textposition = "outside"
-  #   ) %>%
-  #     layout(
-  #       title = list(text = ""),
-  #       paper_bgcolor = "#f5f3f4",
-  #       plot_bgcolor = "#f5f3f4",
-  #       yaxis = list(title = "Peso Total")
-  #     )
-  # })
-  # 
-  # # =====================================================
-  # # 👤 PESCADORES (EXTRA OPCIONAL)
-  # # =====================================================
-  # 
-  # output$grafico_embarcacao  <- renderPlotly({
-  #   
-  #   df <- dados_filtrados() %>%
-  #     group_by(pescador) %>%
-  #     summarise(
-  #       peso_total = sum(peso_gramas, na.rm = TRUE),
-  #       .groups = "drop"
-  #     )
-  #   
-  #   plotly::plot_ly(
-  #     df,
-  #     x = ~pescador,
-  #     y = ~peso_total,
-  #     type = "bar"
-  #   ) %>%
-  #     
-  #   layout(
-  #           title = list(text = ""),
-  # 
-  #           paper_bgcolor = "#f5f3f4",
-  #           plot_bgcolor = "#f5f3f4",
-  # 
-  #           legend = list(title = list(text = "<b>Captura por Pescador</b>"))
-  #         )
-  # 
-  # })
+  dados_filtrados <- reactive({
+
+    df <- dados_ocean
+
+    if (!is.null(input$pescador) && input$pescador != "Todos") {
+      df <- df %>% dplyr::filter(pescador == input$pescador)
+    }
+
+    if (!is.null(input$centro) && input$centro != "Todos") {
+      df <- df %>% dplyr::filter(centro_pesca == input$centro)
+    }
+
+    if (!is.null(input$arte) && input$arte != "Todos") {
+      df <- df %>% dplyr::filter(tipo_arte == input$arte)
+    }
+
+    if (!is.null(input$mare) && input$mare != "Todas") {
+      df <- df %>% dplyr::filter(tipo_mare == input$mare)
+    }
+
+    df
+  })
+
+  # =====================================================
+  # 📌 KPIs
+  # =====================================================
+
+  output$kpi_capturas <- renderText({
+    format(nrow(dados_filtrados()), big.mark = ",")
+  })
+
+  output$kpi_peso <- renderText({
+    round(sum(dados_filtrados()$peso_gramas, na.rm = TRUE) / 1000, 1)
+  })
+
+  output$kpi_especies <- renderText({
+    n_distinct(dados_filtrados()$latin_name)
+  })
+
+  output$kpi_pescadores <- renderText({
+    n_distinct(dados_filtrados()$pescador)
+  })
+
+  # =====================================================
+  # 🐟 TOP ESPÉCIES
+  # =====================================================
+
+  output$grafico_especies <- renderPlotly({
+
+    df <- dados_filtrados() %>%
+      group_by(xitswa_name) %>%
+      summarise(peso_total = sum(peso_gramas, na.rm = TRUE), .groups = "drop") %>%
+      arrange(desc(peso_total)) %>%
+      slice_head(n = 10)
+
+    plotly::plot_ly(
+      df,
+      x = ~reorder(xitswa_name, peso_total),
+      y = ~peso_total,
+      type = "bar",
+      text = ~format(peso_total, big.mark = ","),
+      textposition = "outside"
+    ) %>%
+      layout(
+        title = list(text = ""),
+        paper_bgcolor = "#f5f3f4",
+        plot_bgcolor = "#f5f3f4",
+        xaxis = list(title = "Espécie", tickangle = -25),
+        yaxis = list(title = "Peso (gramas)"),
+        barmode = "stack"
+      )
+  })
+
+  # =====================================================
+  # 🎣 TIPO DE ARTE
+  # =====================================================
+
+  output$grafico_artes <- renderPlotly({
+
+    df <- dados_filtrados() %>% count(tipo_arte)
+
+    plotly::plot_ly(
+      df,
+      labels = ~tipo_arte,
+      values = ~n,
+      type = "pie"
+    ) %>%
+      layout(
+        title = list(text = ""),
+
+        paper_bgcolor = "#f5f3f4",
+        plot_bgcolor = "#f5f3f4",
+
+        legend = list(title = list(text = "<b>Tipo de Arte</b>"))
+      )
+  })
+
+  # =====================================================
+  # 🌊 MARÉ
+  # =====================================================
+
+  output$grafico_mare <- renderPlotly({
+
+    df <- dados_filtrados() %>%
+      group_by(tipo_mare) %>%
+      summarise(peso_total = sum(peso_gramas, na.rm = TRUE), .groups = "drop")
+
+    plotly::plot_ly(
+      df,
+      x = ~tipo_mare,
+      y = ~peso_total,
+      type = "bar",
+      text = ~format(peso_total, big.mark = ","),
+      textposition = "outside"
+    ) %>%
+      layout(
+        title = list(text = ""),
+        paper_bgcolor = "#f5f3f4",
+        plot_bgcolor = "#f5f3f4",
+        xaxis = list(title = "Maré", tickangle = -25),
+        yaxis = list(title = "Peso Total"),
+        barmode = "stack"
+      )
+  })
+
+  # =====================================================
+  # 🧭 EMBARCAÇÃO (EXTRA OPCIONAL)
+  # =====================================================
+
+  output$grafico_embarcacao <- renderPlotly({
+
+    df <- dados_filtrados() %>%
+      group_by(pescador) %>%
+      summarise(peso_total = sum(peso_gramas, na.rm = TRUE), .groups = "drop")
+
+    plotly::plot_ly(
+      df,
+      x = ~pescador,
+      y = ~peso_total,
+      type = "bar",
+      text = ~format(peso_total, big.mark = ","),
+      textposition = "outside"
+    ) %>%
+      layout(
+        title = list(text = ""),
+        paper_bgcolor = "#f5f3f4",
+        plot_bgcolor = "#f5f3f4",
+        yaxis = list(title = "Peso Total")
+      )
+  })
+
+  # =====================================================
+  # 👤 PESCADORES (EXTRA OPCIONAL)
+  # =====================================================
+
+  output$grafico_embarcacao  <- renderPlotly({
+
+    df <- dados_filtrados() %>%
+      group_by(pescador) %>%
+      summarise(
+        peso_total = sum(peso_gramas, na.rm = TRUE),
+        .groups = "drop"
+      )
+
+    plotly::plot_ly(
+      df,
+      x = ~pescador,
+      y = ~peso_total,
+      type = "bar"
+    ) %>%
+
+    layout(
+            title = list(text = ""),
+
+            paper_bgcolor = "#f5f3f4",
+            plot_bgcolor = "#f5f3f4",
+
+            legend = list(title = list(text = "<b>Captura por Pescador</b>"))
+          )
+
+  })
 }
 
 # ==========================================================

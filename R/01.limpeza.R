@@ -125,7 +125,7 @@ Baseline_Raizes <- Baseline_Raizes %>%
     )
   )
 
-# table(Baseline_Raizes$`especificar objetivo`)
+table(Baseline_Raizes$Pessoas_para_falar_quando_se_sente_sozinha)
 
 # Baseline_Raizes <- Baseline_Raizes %>%
 #   mutate(
