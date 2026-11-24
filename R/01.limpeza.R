@@ -1195,24 +1195,24 @@ cat("\nFicheiro exportado:", saida, "\n")
 
 # ============================================================
 # 16. CONSULTAR RESULTADOS
-# ============================================================
-
-View(Amostragens)
-
-View(Especies)
-
-View(Comprimentos)
-
-View(Resumo_Comprimentos)
-
-View(Controlo_Qualidade)
-
-View(Controlo_Medicoes)
-
-View(Verificacao_Datas)
-
-View(dados_ocean)
-
-View(dados_especies)
-
-View(dados_comprimentos)
+# # ============================================================
+# 
+# View(Amostragens)
+# 
+# View(Especies)
+# 
+# View(Comprimentos)
+# 
+# View(Resumo_Comprimentos)
+# 
+# View(Controlo_Qualidade)
+# 
+# View(Controlo_Medicoes)
+# 
+# View(Verificacao_Datas)
+# 
+# View(dados_ocean)
+# 
+# View(dados_especies)
+# 
+# View(dados_comprimentos)

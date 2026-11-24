@@ -4,6 +4,7 @@
 # OCEAN GUARD | 2026
 # ==========================================================
 
+
 # 1. PACOTES
 # ==========================================================
 
@@ -48,6 +49,7 @@ invisible(
 # ==========================================================
 
 options(shiny.maxRequestSize = 30 * 1024^2)
+
 
 # ==========================================================
 # IDIOMAS — PORTUGUÊS / ENGLISH / FRANÇAIS
@@ -102,6 +104,10 @@ traducoes <- list(
   
 )
 
+
+# FUNÇÃO DE TRADUÇÃO
+# ==========================================================
+
 tr <- function(chave, idioma = "pt") {
   
   if (is.null(idioma) || !idioma %in% names(traducoes)) {
@@ -116,6 +122,8 @@ tr <- function(chave, idioma = "pt") {
   
   traducao
 }
+
+
 # 3. CORES INSTITUCIONAIS
 # ==========================================================
 
@@ -142,747 +150,1138 @@ tema_ocean <- bs_theme(
   info = COR_AZUL
 )
 
+
 # ==========================================================
 # UI
 # ==========================================================
+
 ui <- navbarPage(
+  
   title = "Raízes Azuis",
   
-  # SELETOR DE IDIOMAS
-  tags$li(
-    class = "idioma-selector",
-    selectInput(
-      inputId = "idioma_app",
-      label = NULL,
-      choices = c(
-        "🇲🇿 Português" = "pt",
-        "🇬🇧 English" = "en",
-        "🇫🇷 Français" = "fr"
-      ),
-      selected = "pt",
-      width = "150px"
+  theme = tema_ocean,
+  
+  # ========================================================
+  # CABEÇALHO — ESTILOS E SELECTOR DE IDIOMAS
+  # ========================================================
+  
+  header = tagList(
+    
+    tags$head(
+      
+      tags$style(HTML("
+
+        /* SELECTOR DE IDIOMAS */
+
+        .idioma-selector {
+          display: flex;
+          justify-content: flex-end;
+          padding: 10px 20px;
+          background-color: #ffffff;
+        }
+
+        .idioma-selector .form-group {
+          margin-bottom: 0;
+        }
+
+        .idioma-selector select {
+          background-color: white;
+          color: #333333;
+          font-weight: bold;
+          border-radius: 6px;
+          border: 1px solid #dddddd;
+        }
+
+
+        /* NAVBAR */
+
+        .navbar {
+          background-color: #8054A2 !important;
+        }
+
+        .navbar a,
+        .navbar .navbar-brand {
+          color: white !important;
+          font-weight: bold;
+        }
+
+
+        /* CONTEÚDO DOS SEPARADORES */
+
+        .tab-content {
+          background: #ffffff;
+          padding: 15px;
+          border-radius: 10px;
+        }
+
+        .nav-tabs > li > a {
+          color: #8054A2;
+          font-weight: bold;
+        }
+
+        .nav-tabs > li.active > a,
+        .nav-tabs > li.active > a:focus,
+        .nav-tabs > li.active > a:hover {
+          background-color: #8054A2 !important;
+          color: white !important;
+        }
+
+
+        /* VALUE BOXES — KPIs */
+
+        .value-box-container {
+          display: flex;
+          flex-wrap: wrap;
+          justify-content: center;
+          align-items: stretch;
+          gap: 15px;
+          margin-top: 10px;
+        }
+
+        .value-box {
+          flex: 1 1 180px;
+          max-width: 220px;
+          min-width: 160px;
+
+          padding: 16px;
+          border-radius: 14px;
+          color: white;
+          font-weight: bold;
+          text-align: center;
+
+          box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+          transition: all 0.25s ease-in-out;
+        }
+
+        .value-box:hover {
+          transform: translateY(-4px);
+          box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+        }
+
+
+        /* CORES DOS KPIs */
+
+        .blue   { background-color: #6a1b9a; }
+        .green  { background-color: #5cd6c7; }
+        .orange { background-color: #f77333; }
+        .yellow { background-color: #f9a825; }
+        .purple { background-color: #004c91; }
+
+
+        /* TEXTO DOS KPIs */
+
+        .value-title {
+          font-size: 13px;
+          margin-top: 6px;
+          opacity: 0.95;
+        }
+
+        .value-number {
+          font-size: 22px;
+          font-weight: 800;
+        }
+
+
+        /* RESPONSIVO */
+
+        @media (max-width: 768px) {
+          .value-box {
+            flex: 1 1 45%;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .value-box {
+            flex: 1 1 100%;
+          }
+        }
+
+      "))
+      
+    ),
+    
+    # SELECTOR DE IDIOMAS
+    
+    fluidRow(
+      column(
+        width = 12,
+        
+        div(
+          class = "idioma-selector",
+          
+          selectInput(
+            inputId = "idioma_app",
+            label = NULL,
+            
+            choices = c(
+              "🇲🇿 Português" = "pt",
+              "🇬🇧 English" = "en",
+              "🇫🇷 Français" = "fr"
+            ),
+            
+            selected = "pt",
+            width = "150px"
+          )
+        )
+      )
     )
+    
   ),
   
-  # ------------------ Estilo e Tema ------------------
-  header = tags$head(
-    tags$style(HTML("
-    
-/* SELETOR DE IDIOMAS */
-.idioma-selector {
-  float: right;
-  padding: 8px 15px;
-  list-style: none;
-}
-
-.idioma-selector .form-group {
-  margin-bottom: 0;
-}
-
-.idioma-selector select {
-  background-color: white;
-  color: #333333;
-  font-weight: bold;
-  border-radius: 6px;
-  border: none;
-}
-      .navbar {
-        background-color: #9442d4;
-      }
-
-      .navbar-default .navbar-nav > li > a {
-        color: white;
-        font-weight: bold;
-      }
-
-      .navbar-default .navbar-brand {
-        color: white;
-        font-weight: bold;
-      }
-
-      .tab-content {
-        background: #ffffff;
-        padding: 15px;
-        border-radius: 10px;
-      }
-
-      .nav-tabs > li > a {
-        color: #6a1b9a;
-        font-weight: bold;
-      }
-
-      .nav-tabs > li.active > a,
-      .nav-tabs > li.active > a:focus,
-      .nav-tabs > li.active > a:hover {
-        background-color: #9442d4 !important;
-        color: white !important;
-      }
- /* =========================
-       VALUE BOXES (KPIs)
-    ========================== */
-    .value-box-container {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      align-items: stretch;
-      gap: 15px;
-      margin-top: 10px;
-    }
-
-    .value-box {
-      flex: 1 1 180px;
-      max-width: 220px;
-      min-width: 160px;
-
-      padding: 16px;
-      border-radius: 14px;
-      color: white;
-      font-weight: bold;
-      text-align: center;
-
-      box-shadow: 0 3px 10px rgba(0,0,0,0.15);
-      transition: all 0.25s ease-in-out;
-    }
-
-    .value-box:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 6px 18px rgba(0,0,0,0.25);
-    }
-
-    /* =========================
-       CORES
-    ========================== */
-    .blue   { background-color: #6a1b9a; }
-    .green  { background-color: #5cd6c7; }
-    .orange { background-color: #f77333; }
-    .yellow { background-color: #f9a825; }
-    .purple { background-color: #004c91; }
-
-    /* =========================
-       TEXTO
-    ========================== */
-    .value-title {
-      font-size: 13px;
-      margin-top: 6px;
-      opacity: 0.95;
-    }
-
-    .value-number {
-      font-size: 22px;
-      font-weight: 800;
-    }
-
-    /* =========================
-       RESPONSIVO
-    ========================== */
-    @media (max-width: 768px) {
-      .value-box {
-        flex: 1 1 45%;
-      }
-    }
-
-    @media (max-width: 480px) {
-      .value-box {
-        flex: 1 1 100%;
-      }
-    }
-
-    "))
-  ),
+  
   # ========================================================
-  # 1. AGENCIA (TODOS OS INDICADORES)
+  # 1. BASELINE & ENDLINE — TODOS OS INDICADORES
   # ========================================================
+  
   tabPanel(
+    
     "BASELINE & ENDLINE",
     
     sidebarLayout(
+      
       sidebarPanel(
         
         selectInput(
           "filtro_tipo_avaliacao",
           "Avaliação:",
-          choices = c("Todos", sort(unique(Baseline_Raizes$Tipo_Avaliacao))),
+          choices = c(
+            "Todos",
+            sort(unique(Baseline_Raizes$Tipo_Avaliacao))
+          ),
           selected = "Todos"
         ),
         
         selectInput(
           "filtro_local",
           "Distrito/Localidade:",
-          choices = c("Todos", sort(unique(Baseline_Raizes$Distrito_Localidade))),
+          choices = c(
+            "Todos",
+            sort(unique(Baseline_Raizes$Distrito_Localidade))
+          ),
           selected = "Todos"
         ),
         
         selectInput(
           "filtro_comunidade",
           "Comunidade:",
-          choices = c("Todos", sort(unique(Baseline_Raizes$Comunidade))),
+          choices = c(
+            "Todos",
+            sort(unique(Baseline_Raizes$Comunidade))
+          ),
           selected = "Todos"
         )
+        
       ),
+      
       
       mainPanel(
         
-        fluidRow(uiOutput("kpi_agencia")),
+        # ====================================================
+        # SEPARADORES INTERNOS
+        # ====================================================
         
         tabsetPanel(
           
-          tabPanel("PERFIL",
-                   fluidRow(
-                     column(6,
-                            div(
-                              style="background-color:#f5f3f4; padding:12px; border-radius:6px; margin-bottom:20px;",
-                              uiOutput("leitura_sexo")
-                            ),
-                            plotlyOutput("grafico_sexo")),
-                     column(6,
-                            div(
-                              style="background-color:#f5f3f4; padding:12px; border-radius:6px; margin-bottom:20px;",
-                              uiOutput("leitura_estado_civil")
-                            ),
-                            plotlyOutput("grafico_estado_civil"))
-                   ),
-                   br(),
-                   fluidRow(
-                     column(6, 
-                            div(
-                              style="background-color:#f5f3f4; padding:12px; border-radius:6px; margin-bottom:20px;",
-                              uiOutput("leitura_actividade_mar")
-                            ), 
-                            plotlyOutput("grafico_actividade_mar")),
-                     
-                     column(6, 
-                            div(
-                              style="background-color:#f5f3f4; padding:12px; border-radius:6px; margin-bottom:20px;",
-                              uiOutput("leitura_actividade_mar_detalhe")
-                            ),
-                            plotlyOutput("grafico_actividade_mar_detalhe"))
-                   ),
-                   br(),
-                   # ============================================================
-                   # LINHA 3 - ACTIVIDADE FORA DO MAR E ACTIVIDADE SECUNDÁRIA
-                   # ============================================================
-                   
-                   fluidRow(
-                     
-                     column(
-                       6,
-                       div(
-                         style="background-color:#f5f3f4; padding:12px; border-radius:6px; margin-bottom:20px;",
-                         uiOutput("leitura_actividade_fora_mar_detalhe")
-                       ),
-                       plotlyOutput(
-                         "grafico_actividade_fora_mar_detalhe",
-                         height = "450px"
-                       )
-                     ),
-                     
-                     column(
-                       6,
-                       div(
-                         style="background-color:#f5f3f4; padding:12px; border-radius:6px; margin-bottom:20px;",
-                         uiOutput("leitura_actividade_secundaria_mar")
-                       ),
-                       plotlyOutput(
-                         "grafico_actividade_secundaria_mar",
-                         height = "450px"
-                       )
-                     )
-                   )
+          
+          # ==================================================
+          # PERFIL
+          # ==================================================
+          
+          tabPanel(
+            
+            "PERFIL",
+            
+            # KPIs DENTRO DO SEPARADOR PERFIL
+            
+            fluidRow(
+              column(
+                width = 12,
+                
+                div(
+                  style = "
+        padding: 15px 10px 25px 10px;
+        margin-bottom: 20px;
+      ",
+                  uiOutput("kpi_agencia")
+                )
+              )
+            ),
+            
+            br(),
+            
+            # LINHA 1 — SEXO E ESTADO CIVIL
+            
+            fluidRow(
+              
+              column(
+                6,
+                
+                div(
+                  style = "background-color:#f5f3f4; padding:12px; border-radius:6px; margin-bottom:20px;",
+                  uiOutput("leitura_sexo")
+                ),
+                
+                plotlyOutput("grafico_sexo")
+              ),
+              
+              column(
+                6,
+                
+                div(
+                  style = "background-color:#f5f3f4; padding:12px; border-radius:6px; margin-bottom:20px;",
+                  uiOutput("leitura_estado_civil")
+                ),
+                
+                plotlyOutput("grafico_estado_civil")
+              )
+              
+            ),
+            
+            br(),
+            
+            # LINHA 2 — ACTIVIDADE NO MAR
+            
+            fluidRow(
+              
+              column(
+                6,
+                
+                div(
+                  style = "background-color:#f5f3f4; padding:12px; border-radius:6px; margin-bottom:20px;",
+                  uiOutput("leitura_actividade_mar")
+                ),
+                
+                plotlyOutput("grafico_actividade_mar")
+              ),
+              
+              column(
+                6,
+                
+                div(
+                  style = "background-color:#f5f3f4; padding:12px; border-radius:6px; margin-bottom:20px;",
+                  uiOutput("leitura_actividade_mar_detalhe")
+                ),
+                
+                plotlyOutput("grafico_actividade_mar_detalhe")
+              )
+              
+            ),
+            
+            br(),
+            
+            # LINHA 3 — ACTIVIDADE FORA DO MAR
+            # E ACTIVIDADE SECUNDÁRIA
+            
+            fluidRow(
+              
+              column(
+                6,
+                
+                div(
+                  style = "background-color:#f5f3f4; padding:12px; border-radius:6px; margin-bottom:20px;",
+                  uiOutput("leitura_actividade_fora_mar_detalhe")
+                ),
+                
+                plotlyOutput(
+                  "grafico_actividade_fora_mar_detalhe",
+                  height = "450px"
+                )
+              ),
+              
+              column(
+                6,
+                
+                div(
+                  style = "background-color:#f5f3f4; padding:12px; border-radius:6px; margin-bottom:20px;",
+                  uiOutput("leitura_actividade_secundaria_mar")
+                ),
+                
+                plotlyOutput(
+                  "grafico_actividade_secundaria_mar",
+                  height = "450px"
+                )
+              )
+              
+            )
+            
           ),
           
-          tabPanel("TOMADA DE DECISÕES",
-                   
-                   fluidRow(
-                     column(
-                       12,
-                       
-                       div(
-                         style = "
-        background-color:#eef4fb;
-        border-left:5px solid #8054A2;
-        padding:15px;
-        border-radius:6px;
-        margin-bottom:25px;
-      ",
-                         
-                         tags$h4(
-                           style = "margin-top:0; color:#8054A2;",
-                           "TOMANDO DECISÕES"
-                         ),
-                         tags$p(
-                           "Abaixo, temos várias frases sobre a tomada de decisões. ",
-                           "Nós gostaríamos de saber o quanto que você concorda com as frases a seguir, ",
-                           "pensando em seus relacionamentos. Vamos usar uma escala de 1 até 5."
-                         ),
-                         
-                         tags$p(
-                           strong("Use a escala: "),
-                           "1 = Discordo totalmente, ",
-                           "2 = Discordo parcialmente, ",
-                           "3 = Não concordo nem discordo, ",
-                           "4 = Concordo parcialmente, ",
-                           "5 = Concordo totalmente."
-                         ),
-                         
-                         tags$p(
-                           "Não existem respostas certas ou erradas e pedimos que responda ",
-                           "de acordo com seus sentimentos."
-                         )
-                       )
-                     )
-                   ),
-                 
-                   fluidRow(
-                     column(6,
-                            div(
-                              style="background-color:#f5f3f4; padding:12px; border-radius:6px; margin-bottom:20px;",
-                              uiOutput("leitura_poder_decidir")
-                            ),
-                            plotlyOutput("grafico_poder_decidir_economica")),
-                     column(6, 
-                            div(
-                              style="background-color:#f5f3f4; padding:12px; border-radius:6px; margin-bottom:20px;",
-                              uiOutput("leitura_poder_educacao")
-                            ),
-                            plotlyOutput("grafico_poder_educacao"))
-                   ),
-                   br(),
-                   fluidRow(
-                     column(6, 
-                            div(
-                              style="background-color:#f5f3f4; padding:12px; border-radius:6px; margin-bottom:20px;",
-                              uiOutput("leitura_decide_futuro_profissional")
-                            ),
-                            plotlyOutput("grafico_decide_futuro_profissional")),
-                     column(6,
-                            div(
-                              style="background-color:#f5f3f4; padding:12px; border-radius:6px; margin-bottom:20px;",
-                              uiOutput("leitura_decide_movimentos")
-                            ),
-                            plotlyOutput("grafico_decide_movimentos"))
-                   ),
-                   br(),
-                   fluidRow(
-                     column(6,
-                            div(
-                              style="background-color:#f5f3f4; padding:12px; border-radius:6px; margin-bottom:20px;",
-                              uiOutput("leitura_decide_grandes_despesas")
-                            ),
-                            plotlyOutput("grafico_decide_grandes_despesas")),
-                     column(6,
-                            div(
-                              style="background-color:#f5f3f4; padding:12px; border-radius:6px; margin-bottom:20px;",
-                              uiOutput("leitura_decide_pequenas_despesas")
-                            ),
-                            plotlyOutput("grafico_decide_pequenas_despesas"))
-                   ),
-                   br(),
-                   fluidRow(
-                     column(12,
-                            div(
-                              style="background-color:#f5f3f4; padding:12px; border-radius:6px; margin-bottom:20px;",
-                              uiOutput("leitura_quem_decide")
-                            ),
-                            plotlyOutput("grafico_quem_decide", height = "650px"))
-                   )
+          
+          # ==================================================
+          # TOMADA DE DECISÕES
+          # ==================================================
+          
+          tabPanel(
+            
+            "TOMADA DE DECISÕES",
+            
+            fluidRow(
+              
+              column(
+                12,
+                
+                div(
+                  
+                  style = "
+                    background-color:#eef4fb;
+                    border-left:5px solid #8054A2;
+                    padding:15px;
+                    border-radius:6px;
+                    margin-bottom:25px;
+                  ",
+                  
+                  tags$h4(
+                    style = "margin-top:0; color:#8054A2;",
+                    "TOMANDO DECISÕES"
+                  ),
+                  
+                  tags$p(
+                    "Abaixo, temos várias frases sobre a tomada de decisões. ",
+                    "Nós gostaríamos de saber o quanto que você concorda com as frases a seguir, ",
+                    "pensando em seus relacionamentos. Vamos usar uma escala de 1 até 5."
+                  ),
+                  
+                  tags$p(
+                    strong("Use a escala: "),
+                    "1 = Discordo totalmente, ",
+                    "2 = Discordo parcialmente, ",
+                    "3 = Não concordo nem discordo, ",
+                    "4 = Concordo parcialmente, ",
+                    "5 = Concordo totalmente."
+                  ),
+                  
+                  tags$p(
+                    "Não existem respostas certas ou erradas e pedimos que responda ",
+                    "de acordo com seus sentimentos."
+                  )
+                  
+                )
+                
+              )
+              
+            ),
+            
+            
+            fluidRow(
+              
+              column(
+                6,
+                
+                div(
+                  style = "background-color:#f5f3f4; padding:12px; border-radius:6px; margin-bottom:20px;",
+                  uiOutput("leitura_poder_decidir")
+                ),
+                
+                plotlyOutput("grafico_poder_decidir_economica")
+              ),
+              
+              column(
+                6,
+                
+                div(
+                  style = "background-color:#f5f3f4; padding:12px; border-radius:6px; margin-bottom:20px;",
+                  uiOutput("leitura_poder_educacao")
+                ),
+                
+                plotlyOutput("grafico_poder_educacao")
+              )
+              
+            ),
+            
+            br(),
+            
+            fluidRow(
+              
+              column(
+                6,
+                
+                div(
+                  style = "background-color:#f5f3f4; padding:12px; border-radius:6px; margin-bottom:20px;",
+                  uiOutput("leitura_decide_futuro_profissional")
+                ),
+                
+                plotlyOutput("grafico_decide_futuro_profissional")
+              ),
+              
+              column(
+                6,
+                
+                div(
+                  style = "background-color:#f5f3f4; padding:12px; border-radius:6px; margin-bottom:20px;",
+                  uiOutput("leitura_decide_movimentos")
+                ),
+                
+                plotlyOutput("grafico_decide_movimentos")
+              )
+              
+            ),
+            
+            br(),
+            
+            fluidRow(
+              
+              column(
+                6,
+                
+                div(
+                  style = "background-color:#f5f3f4; padding:12px; border-radius:6px; margin-bottom:20px;",
+                  uiOutput("leitura_decide_grandes_despesas")
+                ),
+                
+                plotlyOutput("grafico_decide_grandes_despesas")
+              ),
+              
+              column(
+                6,
+                
+                div(
+                  style = "background-color:#f5f3f4; padding:12px; border-radius:6px; margin-bottom:20px;",
+                  uiOutput("leitura_decide_pequenas_despesas")
+                ),
+                
+                plotlyOutput("grafico_decide_pequenas_despesas")
+              )
+              
+            ),
+            
+            br(),
+            
+            fluidRow(
+              
+              column(
+                12,
+                
+                div(
+                  style = "background-color:#f5f3f4; padding:12px; border-radius:6px; margin-bottom:20px;",
+                  uiOutput("leitura_quem_decide")
+                ),
+                
+                plotlyOutput(
+                  "grafico_quem_decide",
+                  height = "650px"
+                )
+                
+              )
+              
+            )
+            
           ),
           
-          tabPanel("NORMAS SOCIAIS",
-                   
-                   fluidRow(
-                     column(
-                       12,
-                       
-                       div(
-                         style = "
-        background-color:#eef4fb;
-        border-left:5px solid #8054A2;
-        padding:15px;
-        border-radius:6px;
-        margin-bottom:25px;
-      ",
-                         
-                         tags$h4(
-                           style = "margin-top:0; color:#8054A2;",
-                           "NORMAS SOCIAIS"
-                         ),
-                         
-                         tags$p(
-                           "Nesta secção, temos várias perguntas sobre as normas sociais ",
-                           "e sobre as perceções relacionadas com os papéis de mulheres e homens ",
-                           "na comunidade."
-                         ),
-                         
-                         tags$p(
-                           "Queremos saber como você percebe estas situações na sua comunidade, ",
-                           "incluindo questões relacionadas com liderança, tomada de decisões, ",
-                           "respeito e relações entre mulheres e homens."
-                         ),
-                         
-                         tags$p(
-                           strong("Não existem respostas certas ou erradas. "),
-                           "Responda de acordo com a sua opinião, experiência e percepção ",
-                           "sobre o que acontece na sua comunidade."
-                         )
-                       )
-                     )
-                   ),
-                   
-                   br(),
-                   fluidRow(
-                     column(6, 
-                            div(
-                              style="background-color:#f5f3f4; padding:12px; border-radius:6px; margin-bottom:20px;",
-                              uiOutput("leitura_deseja_lideranca")
-                            ),
-                            plotlyOutput("grafico_deseja_lideranca")),
-                     column(6, 
-                            div(
-                              style="background-color:#f5f3f4; padding:12px; border-radius:6px; margin-bottom:20px;",
-                              uiOutput("leitura_mulheres_lideranca")
-                            ),
-                            plotlyOutput("grafico_mulheres_lideranca"))
-                   ),
-                   br(),
-                   fluidRow(
-                     column(6, 
-                            div(
-                              style="background-color:#f5f3f4; padding:12px; border-radius:6px; margin-bottom:20px;",
-                              uiOutput("leitura_aprovaria_mulher_liderar")
-                            ),
-                            plotlyOutput("grafico_aprovaria_mulher_liderar")),
-                     column(6, 
-                            div(
-                              style="background-color:#f5f3f4; padding:12px; border-radius:6px; margin-bottom:20px;",
-                              uiOutput("leitura_quantas_aprovariam_mulher")
-                            ),
-                            plotlyOutput("grafico_quantas_aprovariam_mulher"))  
-                   ),
-                   br(),
-                   fluidRow(
-                     column(6, 
-                            div(
-                              style="background-color:#f5f3f4; padding:12px; border-radius:6px; margin-bottom:20px;",
-                              uiOutput("leitura_mulher_aceitar_violencia")
-                            ),
-                            plotlyOutput("grafico_mulher_aceitar_violencia")),
-                     column(6, 
-                            div(
-                              style="background-color:#f5f3f4; padding:12px; border-radius:6px; margin-bottom:20px;",
-                              uiOutput("leitura_homem_bate_mulher")
-                            ),
-                            plotlyOutput("grafico_homem_bate_mulher"))
-                   ),
-                   br(),
-                   fluidRow(
-                     column(6, 
-                            div(
-                              style="background-color:#f5f3f4; padding:12px; border-radius:6px; margin-bottom:20px;",
-                              uiOutput("leitura_respeito_jovem")
-                            ),
-                            plotlyOutput("grafico_respeito_jovem")),
-                     column(6, 
-                            div(
-                              style="background-color:#f5f3f4; padding:12px; border-radius:6px; margin-bottom:20px;",
-                              uiOutput("leitura_grupos_comunidade")
-                            ),
-                            plotlyOutput("grafico_grupos_comunidade"))
-                   )
+          
+          # ==================================================
+          # NORMAS SOCIAIS
+          # ==================================================
+          
+          tabPanel(
+            
+            "NORMAS SOCIAIS",
+            
+            fluidRow(
+              
+              column(
+                12,
+                
+                div(
+                  
+                  style = "
+                    background-color:#eef4fb;
+                    border-left:5px solid #8054A2;
+                    padding:15px;
+                    border-radius:6px;
+                    margin-bottom:25px;
+                  ",
+                  
+                  tags$h4(
+                    style = "margin-top:0; color:#8054A2;",
+                    "NORMAS SOCIAIS"
+                  ),
+                  
+                  tags$p(
+                    "Nesta secção, temos várias perguntas sobre as normas sociais ",
+                    "e sobre as perceções relacionadas com os papéis de mulheres e homens ",
+                    "na comunidade."
+                  ),
+                  
+                  tags$p(
+                    "Queremos saber como você percebe estas situações na sua comunidade, ",
+                    "incluindo questões relacionadas com liderança, tomada de decisões, ",
+                    "respeito e relações entre mulheres e homens."
+                  ),
+                  
+                  tags$p(
+                    strong("Não existem respostas certas ou erradas. "),
+                    "Responda de acordo com a sua opinião, experiência e percepção ",
+                    "sobre o que acontece na sua comunidade."
+                  )
+                  
+                )
+                
+              )
+              
+            ),
+            
+            br(),
+            
+            fluidRow(
+              
+              column(
+                6,
+                
+                div(
+                  style = "background-color:#f5f3f4; padding:12px; border-radius:6px; margin-bottom:20px;",
+                  uiOutput("leitura_deseja_lideranca")
+                ),
+                
+                plotlyOutput("grafico_deseja_lideranca")
+              ),
+              
+              column(
+                6,
+                
+                div(
+                  style = "background-color:#f5f3f4; padding:12px; border-radius:6px; margin-bottom:20px;",
+                  uiOutput("leitura_mulheres_lideranca")
+                ),
+                
+                plotlyOutput("grafico_mulheres_lideranca")
+              )
+              
+            ),
+            
+            br(),
+            
+            fluidRow(
+              
+              column(
+                6,
+                
+                div(
+                  style = "background-color:#f5f3f4; padding:12px; border-radius:6px; margin-bottom:20px;",
+                  uiOutput("leitura_aprovaria_mulher_liderar")
+                ),
+                
+                plotlyOutput("grafico_aprovaria_mulher_liderar")
+              ),
+              
+              column(
+                6,
+                
+                div(
+                  style = "background-color:#f5f3f4; padding:12px; border-radius:6px; margin-bottom:20px;",
+                  uiOutput("leitura_quantas_aprovariam_mulher")
+                ),
+                
+                plotlyOutput("grafico_quantas_aprovariam_mulher")
+              )
+              
+            ),
+            
+            br(),
+            
+            fluidRow(
+              
+              column(
+                6,
+                
+                div(
+                  style = "background-color:#f5f3f4; padding:12px; border-radius:6px; margin-bottom:20px;",
+                  uiOutput("leitura_mulher_aceitar_violencia")
+                ),
+                
+                plotlyOutput("grafico_mulher_aceitar_violencia")
+              ),
+              
+              column(
+                6,
+                
+                div(
+                  style = "background-color:#f5f3f4; padding:12px; border-radius:6px; margin-bottom:20px;",
+                  uiOutput("leitura_homem_bate_mulher")
+                ),
+                
+                plotlyOutput("grafico_homem_bate_mulher")
+              )
+              
+            ),
+            
+            br(),
+            
+            fluidRow(
+              
+              column(
+                6,
+                
+                div(
+                  style = "background-color:#f5f3f4; padding:12px; border-radius:6px; margin-bottom:20px;",
+                  uiOutput("leitura_respeito_jovem")
+                ),
+                
+                plotlyOutput("grafico_respeito_jovem")
+              ),
+              
+              column(
+                6,
+                
+                div(
+                  style = "background-color:#f5f3f4; padding:12px; border-radius:6px; margin-bottom:20px;",
+                  uiOutput("leitura_grupos_comunidade")
+                ),
+                
+                plotlyOutput("grafico_grupos_comunidade")
+              )
+              
+            )
+            
           ),
           
-          tabPanel("CAPITAL SOCIAL E REDES",
-                   fluidRow(
-                     column(
-                       12,
-                       
-                       div(
-                         style = "
-        background-color:#eef4fb;
-        border-left:5px solid #8054A2;
-        padding:15px;
-        border-radius:6px;
-        margin-bottom:25px;
-      ",
-                         
-                         tags$h4(
-                           style = "margin-top:0; color:#8054A2;",
-                           "CAPITAL SOCIAL E REDES"
-                         ),
-                         
-                         tags$p(
-                           "Abaixo, temos várias frases sobre a sua relação com outras pessoas ",
-                           "e sobre o apoio que recebe das pessoas próximas."
-                         ),
-                         
-                         tags$p(
-                           "Queremos saber como você percebe as suas relações com amigos, ",
-                           "familiares e outras pessoas da sua comunidade, incluindo as pessoas ",
-                           "com quem pode conversar, partilhar problemas e receber apoio."
-                         ),
-                         
-                         tags$p(
-                           strong("Não existem respostas certas ou erradas. "),
-                           "Responda de acordo com os seus sentimentos, experiências ",
-                           "e relações com as pessoas à sua volta."
-                         ),
-                         
-                         tags$p(
-                           strong("Para as frases de concordância, use a escala: "),
-                           "1 = Discordo totalmente, ",
-                           "2 = Discordo parcialmente, ",
-                           "3 = Não concordo, nem discordo, ",
-                           "4 = Concordo parcialmente, ",
-                           "5 = Concordo totalmente."
-                         )
-                       )
-                     )
-                   ),
-                   
-                   fluidRow(
-                     column(6, 
-                            div(
-                              style="background-color:#f5f3f4; padding:12px; border-radius:6px; margin-bottom:20px;",
-                              uiOutput("leitura_pessoas_falar_sozinha")
-                            ),
-                            plotlyOutput("grafico_pessoas_falar_sozinha")),
-                     column(6, 
-                            div(
-                              style="background-color:#f5f3f4; padding:12px; border-radius:6px; margin-bottom:20px;",
-                              uiOutput("leitura_pessoas_discutir_problemas")
-                            ),
-                            plotlyOutput("grafico_pessoas_discutir_problemas"))
-                   ),
-                   br(),
-                   fluidRow(
-                     column(6, 
-                            div(
-                              style="background-color:#f5f3f4; padding:12px; border-radius:6px; margin-bottom:20px;",
-                              uiOutput("leitura_partilhar_alegrias")
-                            ),
-                            plotlyOutput("grafico_partilhar_alegrias")),
-                     column(6, 
-                            div(
-                              style="background-color:#f5f3f4; padding:12px; border-radius:6px; margin-bottom:20px;",
-                              uiOutput("leitura_discutir_amigos")
-                            ),
-                            plotlyOutput("grafico_discutir_amigos"))
-                   ),
-                   br(),
-                   fluidRow(
-                     column(6, 
-                            div(
-                              style="background-color:#f5f3f4; padding:12px; border-radius:6px; margin-bottom:20px;",
-                              uiOutput("leitura_familiares_apoiam")
-                            ),
-                            plotlyOutput("grafico_familiares_apoiam")),
-                     column(6, 
-                            div(
-                              style="background-color:#f5f3f4; padding:12px; border-radius:6px; margin-bottom:20px;",
-                              uiOutput("leitura_familia_apoia_decisao")
-                            ),
-                            plotlyOutput("grafico_familia_apoia_decisao"))
-                   )
+          
+          # ==================================================
+          # CAPITAL SOCIAL E REDES
+          # ==================================================
+          
+          tabPanel(
+            
+            "CAPITAL SOCIAL E REDES",
+            
+            fluidRow(
+              
+              column(
+                12,
+                
+                div(
+                  
+                  style = "
+                    background-color:#eef4fb;
+                    border-left:5px solid #8054A2;
+                    padding:15px;
+                    border-radius:6px;
+                    margin-bottom:25px;
+                  ",
+                  
+                  tags$h4(
+                    style = "margin-top:0; color:#8054A2;",
+                    "CAPITAL SOCIAL E REDES"
+                  ),
+                  
+                  tags$p(
+                    "Abaixo, temos várias frases sobre a sua relação com outras pessoas ",
+                    "e sobre o apoio que recebe das pessoas próximas."
+                  ),
+                  
+                  tags$p(
+                    "Queremos saber como você percebe as suas relações com amigos, ",
+                    "familiares e outras pessoas da sua comunidade, incluindo as pessoas ",
+                    "com quem pode conversar, partilhar problemas e receber apoio."
+                  ),
+                  
+                  tags$p(
+                    strong("Não existem respostas certas ou erradas. "),
+                    "Responda de acordo com os seus sentimentos, experiências ",
+                    "e relações com as pessoas à sua volta."
+                  ),
+                  
+                  tags$p(
+                    strong("Para as frases de concordância, use a escala: "),
+                    "1 = Discordo totalmente, ",
+                    "2 = Discordo parcialmente, ",
+                    "3 = Não concordo, nem discordo, ",
+                    "4 = Concordo parcialmente, ",
+                    "5 = Concordo totalmente."
+                  )
+                  
+                )
+                
+              )
+              
+            ),
+            
+            fluidRow(
+              
+              column(
+                6,
+                
+                div(
+                  style = "background-color:#f5f3f4; padding:12px; border-radius:6px; margin-bottom:20px;",
+                  uiOutput("leitura_pessoas_falar_sozinha")
+                ),
+                
+                plotlyOutput("grafico_pessoas_falar_sozinha")
+              ),
+              
+              column(
+                6,
+                
+                div(
+                  style = "background-color:#f5f3f4; padding:12px; border-radius:6px; margin-bottom:20px;",
+                  uiOutput("leitura_pessoas_discutir_problemas")
+                ),
+                
+                plotlyOutput("grafico_pessoas_discutir_problemas")
+              )
+              
+            ),
+            
+            br(),
+            
+            fluidRow(
+              
+              column(
+                6,
+                
+                div(
+                  style = "background-color:#f5f3f4; padding:12px; border-radius:6px; margin-bottom:20px;",
+                  uiOutput("leitura_partilhar_alegrias")
+                ),
+                
+                plotlyOutput("grafico_partilhar_alegrias")
+              ),
+              
+              column(
+                6,
+                
+                div(
+                  style = "background-color:#f5f3f4; padding:12px; border-radius:6px; margin-bottom:20px;",
+                  uiOutput("leitura_discutir_amigos")
+                ),
+                
+                plotlyOutput("grafico_discutir_amigos")
+              )
+              
+            ),
+            
+            br(),
+            
+            fluidRow(
+              
+              column(
+                6,
+                
+                div(
+                  style = "background-color:#f5f3f4; padding:12px; border-radius:6px; margin-bottom:20px;",
+                  uiOutput("leitura_familiares_apoiam")
+                ),
+                
+                plotlyOutput("grafico_familiares_apoiam")
+              ),
+              
+              column(
+                6,
+                
+                div(
+                  style = "background-color:#f5f3f4; padding:12px; border-radius:6px; margin-bottom:20px;",
+                  uiOutput("leitura_familia_apoia_decisao")
+                ),
+                
+                plotlyOutput("grafico_familia_apoia_decisao")
+              )
+              
+            )
+            
           ),
           
-          tabPanel("AUTO-ESTIMA",
-                   
-                   fluidRow(
-                     column(
-                       12,
-                       div(
-                         style = "
-        background-color:#eef4fb;
-        border-left:5px solid #8054A2;
-        padding:15px;
-        border-radius:6px;
-        margin-bottom:25px;
-      ",
-                         
-                         tags$h4(
-                           style = "margin-top:0; color:#8054A2;",
-                           "AUTO-ESTIMA"
-                         ),
-                         
-                         tags$p(
-                           "Abaixo, temos várias frases sobre a forma como você se vê ",
-                           "e sobre o valor que atribui a si mesma."
-                         ),
-                         
-                         tags$p(
-                           "Queremos saber como você se sente em relação às suas qualidades, ",
-                           "ao seu valor pessoal e à forma como avalia a si mesma. ",
-                           "Responda pensando nos seus próprios sentimentos e experiências."
-                         ),
-                         
-                         tags$p(
-                           strong("Não existem respostas certas ou erradas. "),
-                           "Responda de acordo com aquilo que realmente pensa e sente sobre si mesma."
-                         ),
-                         
-                         tags$p(
-                           strong("Para as frases de concordância, use a escala: "),
-                           "1 = Discordo totalmente, ",
-                           "2 = Discordo parcialmente, ",
-                           "3 = Não concordo, nem discordo, ",
-                           "4 = Concordo parcialmente, ",
-                           "5 = Concordo totalmente."
-                         )
-                       )
-                     )
-                   ),
-                   
-                   fluidRow(
-                     column(6, 
-                            div(
-                              style="background-color:#f5f3f4; padding:12px; border-radius:6px; margin-bottom:20px;",
-                              uiOutput("leitura_pessoa_valor")
-                            ),
-                            plotlyOutput("grafico_pessoa_valor")),
-                     column(6, 
-                            div(
-                              style="background-color:#f5f3f4; padding:12px; border-radius:6px; margin-bottom:20px;",
-                              uiOutput("leitura_pessoa_nao_presta")
-                            ),
-                            plotlyOutput("grafico_pessoa_nao_presta"))
-                   ),
-                   
-                   br(),
-                   fluidRow(
-                     column(6, 
-                            div(
-                              style="background-color:#f5f3f4; padding:12px; border-radius:6px; margin-bottom:20px;",
-                              uiOutput("leitura_pessoa_fracassada")
-                            ),
-                            plotlyOutput("grafico_pessoa_fracassada")),
-                     column(6, 
-                            div(
-                              style="background-color:#f5f3f4; padding:12px; border-radius:6px; margin-bottom:20px;",
-                              uiOutput("leitura_pessoa_boas_qualidades")
-                            ),
-                            plotlyOutput("grafico_pessoa_boas_qualidades"))
-                   ),
-                   br(),
-                   fluidRow(
-                     column(6, 
-                            div(
-                              style="background-color:#f5f3f4; padding:12px; border-radius:6px; margin-bottom:20px;",
-                              uiOutput("leitura_satisfeita_comigo")
-                            ),
-                            plotlyOutput("grafico_satisfeita_comigo")),
-                     column(6, 
-                            div(
-                              style="background-color:#f5f3f4; padding:12px; border-radius:6px; margin-bottom:20px;",
-                              uiOutput("leitura_alcancar_objectivos")
-                            ),
-                            plotlyOutput("grafico_alcancar_objectivos"))
-                   )
+          
+          # ==================================================
+          # AUTO-ESTIMA
+          # ==================================================
+          
+          tabPanel(
+            
+            "AUTO-ESTIMA",
+            
+            fluidRow(
+              
+              column(
+                12,
+                
+                div(
+                  
+                  style = "
+                    background-color:#eef4fb;
+                    border-left:5px solid #8054A2;
+                    padding:15px;
+                    border-radius:6px;
+                    margin-bottom:25px;
+                  ",
+                  
+                  tags$h4(
+                    style = "margin-top:0; color:#8054A2;",
+                    "AUTO-ESTIMA"
+                  ),
+                  
+                  tags$p(
+                    "Abaixo, temos várias frases sobre a forma como você se vê ",
+                    "e sobre o valor que atribui a si mesma."
+                  ),
+                  
+                  tags$p(
+                    "Queremos saber como você se sente em relação às suas qualidades, ",
+                    "ao seu valor pessoal e à forma como avalia a si mesma. ",
+                    "Responda pensando nos seus próprios sentimentos e experiências."
+                  ),
+                  
+                  tags$p(
+                    strong("Não existem respostas certas ou erradas. "),
+                    "Responda de acordo com aquilo que realmente pensa e sente sobre si mesma."
+                  ),
+                  
+                  tags$p(
+                    strong("Para as frases de concordância, use a escala: "),
+                    "1 = Discordo totalmente, ",
+                    "2 = Discordo parcialmente, ",
+                    "3 = Não concordo, nem discordo, ",
+                    "4 = Concordo parcialmente, ",
+                    "5 = Concordo totalmente."
+                  )
+                  
+                )
+                
+              )
+              
+            ),
+            
+            fluidRow(
+              
+              column(
+                6,
+                
+                div(
+                  style = "background-color:#f5f3f4; padding:12px; border-radius:6px; margin-bottom:20px;",
+                  uiOutput("leitura_pessoa_valor")
+                ),
+                
+                plotlyOutput("grafico_pessoa_valor")
+              ),
+              
+              column(
+                6,
+                
+                div(
+                  style = "background-color:#f5f3f4; padding:12px; border-radius:6px; margin-bottom:20px;",
+                  uiOutput("leitura_pessoa_nao_presta")
+                ),
+                
+                plotlyOutput("grafico_pessoa_nao_presta")
+              )
+              
+            ),
+            
+            br(),
+            
+            fluidRow(
+              
+              column(
+                6,
+                
+                div(
+                  style = "background-color:#f5f3f4; padding:12px; border-radius:6px; margin-bottom:20px;",
+                  uiOutput("leitura_pessoa_fracassada")
+                ),
+                
+                plotlyOutput("grafico_pessoa_fracassada")
+              ),
+              
+              column(
+                6,
+                
+                div(
+                  style = "background-color:#f5f3f4; padding:12px; border-radius:6px; margin-bottom:20px;",
+                  uiOutput("leitura_pessoa_boas_qualidades")
+                ),
+                
+                plotlyOutput("grafico_pessoa_boas_qualidades")
+              )
+              
+            ),
+            
+            br(),
+            
+            fluidRow(
+              
+              column(
+                6,
+                
+                div(
+                  style = "background-color:#f5f3f4; padding:12px; border-radius:6px; margin-bottom:20px;",
+                  uiOutput("leitura_satisfeita_comigo")
+                ),
+                
+                plotlyOutput("grafico_satisfeita_comigo")
+              ),
+              
+              column(
+                6,
+                
+                div(
+                  style = "background-color:#f5f3f4; padding:12px; border-radius:6px; margin-bottom:20px;",
+                  uiOutput("leitura_alcancar_objectivos")
+                ),
+                
+                plotlyOutput("grafico_alcancar_objectivos")
+              )
+              
+            )
+            
           ),
           
-          tabPanel("AUTOEFICÁCIA",
-                   fluidRow(
-                     column(
-                       12,
-                       div(
-                         style = "
-        background-color:#eef4fb;
-        border-left:5px solid #8054A2;
-        padding:15px;
-        border-radius:6px;
-        margin-bottom:25px;
-      ",
-                         
-                         tags$h4(
-                           style = "margin-top:0; color:#8054A2;",
-                           "AUTOEFICÁCIA"
-                         ),
-                         
-                         tags$p(
-                           "Nesta parte, temos várias situações do dia a dia e queremos saber ",
-                           "até que ponto você acredita que consegue agir ou expressar-se ",
-                           "nessas situações."
-                         ),
-                         
-                         tags$p(
-                           "Pense naquilo que você acredita que seria capaz de fazer, ",
-                           "mesmo quando a situação envolve outras pessoas, discordância ",
-                           "ou alguma dificuldade."
-                         ),
-                         
-                         tags$p(
-                           strong("Não existem respostas certas ou erradas. "),
-                           "Escolha a opção que melhor representa aquilo que você acredita ",
-                           "que consegue fazer."
-                         ),
-                         
-                         tags$p(
-                           strong("Use a escala de 1 a 5: "),
-                           "1 = Definitivamente não posso fazer, ",
-                           "2 = Provavelmente não posso fazer, ",
-                           "3 = Talvez possa fazer, ",
-                           "4 = Provavelmente posso fazer, ",
-                           "5 = Completamente certa que posso fazer."
-                         )
-                       )
-                     )
-                   ),
-                   fluidRow(
-                     column(6, 
-                            div(
-                              style="background-color:#f5f3f4; padding:12px; border-radius:6px; margin-bottom:20px;",
-                              uiOutput("leitura_expressar_opiniao")
-                            ),
-                            plotlyOutput("grafico_expressar_opiniao")),
-                     column(6, 
-                            div(
-                              style="background-color:#f5f3f4; padding:12px; border-radius:6px; margin-bottom:20px;",
-                              uiOutput("leitura_expressar_nao_concordando")
-                            ),
-                            plotlyOutput("grafico_expressar_nao_concordando"))
-                   ),
-                   
-                   br(),
-                   fluidRow(
-                     column(6, 
-                            div(
-                              style="background-color:#f5f3f4; padding:12px; border-radius:6px; margin-bottom:20px;",
-                              uiOutput("leitura_expressar_trabalho")
-                            ),
-                            plotlyOutput("grafico_expressar_trabalho")),
-                     column(6, 
-                            div(
-                              style="background-color:#f5f3f4; padding:12px; border-radius:6px; margin-bottom:20px;",
-                              uiOutput("leitura_expressar_escola")
-                            ),
-                            plotlyOutput("grafico_expressar_escola"))
-                   ),
-                   br(),
-                   fluidRow(
-                     column(6, 
-                            div(
-                              style="background-color:#f5f3f4; padding:12px; border-radius:6px; margin-bottom:20px;",
-                              uiOutput("leitura_defender_injusticas")
-                            ),
-                            plotlyOutput("grafico_defender_injusticas")),
-                     column(6, 
-                            div(
-                              style="background-color:#f5f3f4; padding:12px; border-radius:6px; margin-bottom:20px;",
-                              uiOutput("leitura_expressar_infeliz")
-                            ),
-                            plotlyOutput("grafico_expressar_infeliz"))
-                   )
+          
+          # ==================================================
+          # AUTOEFICÁCIA
+          # ==================================================
+          
+          tabPanel(
+            
+            "AUTOEFICÁCIA",
+            
+            fluidRow(
+              
+              column(
+                12,
+                
+                div(
+                  
+                  style = "
+                    background-color:#eef4fb;
+                    border-left:5px solid #8054A2;
+                    padding:15px;
+                    border-radius:6px;
+                    margin-bottom:25px;
+                  ",
+                  
+                  tags$h4(
+                    style = "margin-top:0; color:#8054A2;",
+                    "AUTOEFICÁCIA"
+                  ),
+                  
+                  tags$p(
+                    "Nesta parte, temos várias situações do dia a dia e queremos saber ",
+                    "até que ponto você acredita que consegue agir ou expressar-se ",
+                    "nessas situações."
+                  ),
+                  
+                  tags$p(
+                    "Pense naquilo que você acredita que seria capaz de fazer, ",
+                    "mesmo quando a situação envolve outras pessoas, discordância ",
+                    "ou alguma dificuldade."
+                  ),
+                  
+                  tags$p(
+                    strong("Não existem respostas certas ou erradas. "),
+                    "Escolha a opção que melhor representa aquilo que você acredita ",
+                    "que consegue fazer."
+                  ),
+                  
+                  tags$p(
+                    strong("Use a escala de 1 a 5: "),
+                    "1 = Definitivamente não posso fazer, ",
+                    "2 = Provavelmente não posso fazer, ",
+                    "3 = Talvez possa fazer, ",
+                    "4 = Provavelmente posso fazer, ",
+                    "5 = Completamente certa que posso fazer."
+                  )
+                  
+                )
+                
+              )
+              
+            ),
+            
+            fluidRow(
+              
+              column(
+                6,
+                
+                div(
+                  style = "background-color:#f5f3f4; padding:12px; border-radius:6px; margin-bottom:20px;",
+                  uiOutput("leitura_expressar_opiniao")
+                ),
+                
+                plotlyOutput("grafico_expressar_opiniao")
+              ),
+              
+              column(
+                6,
+                
+                div(
+                  style = "background-color:#f5f3f4; padding:12px; border-radius:6px; margin-bottom:20px;",
+                  uiOutput("leitura_expressar_nao_concordando")
+                ),
+                
+                plotlyOutput("grafico_expressar_nao_concordando")
+              )
+              
+            ),
+            
+            br(),
+            
+            fluidRow(
+              
+              column(
+                6,
+                
+                div(
+                  style = "background-color:#f5f3f4; padding:12px; border-radius:6px; margin-bottom:20px;",
+                  uiOutput("leitura_expressar_trabalho")
+                ),
+                
+                plotlyOutput("grafico_expressar_trabalho")
+              ),
+              
+              column(
+                6,
+                
+                div(
+                  style = "background-color:#f5f3f4; padding:12px; border-radius:6px; margin-bottom:20px;",
+                  uiOutput("leitura_expressar_escola")
+                ),
+                
+                plotlyOutput("grafico_expressar_escola")
+              )
+              
+            ),
+            
+            br(),
+            
+            fluidRow(
+              
+              column(
+                6,
+                
+                div(
+                  style = "background-color:#f5f3f4; padding:12px; border-radius:6px; margin-bottom:20px;",
+                  uiOutput("leitura_defender_injusticas")
+                ),
+                
+                plotlyOutput("grafico_defender_injusticas")
+              ),
+              
+              column(
+                6,
+                
+                div(
+                  style = "background-color:#f5f3f4; padding:12px; border-radius:6px; margin-bottom:20px;",
+                  uiOutput("leitura_expressar_infeliz")
+                ),
+                
+                plotlyOutput("grafico_expressar_infeliz")
+              )
+              
+            )
+            
           )
           
-        ),
+        ) # FIM TABSETPANEL
         
-      )
-    )   
-  ),    
+      ) # FIM MAINPANEL
+      
+    ) # FIM SIDEBARLAYOUT
+    
+  ), # FIM BASELINE & ENDLINE
   
   
   # ========================================================
   # OCEAN GUARD — DASHBOARD DE AMOSTRAGEM
   # ========================================================
-  
+
   tabPanel(
     "Ocean Guard",
     
