@@ -24,7 +24,7 @@ library(tidygeocoder)
 library(dplyr)
 library(openxlsx)
 library(leaflet)
-library(shinycssloaders)  # para o withSpinner
+library(shinycssloaders)  
 library(openxlsx)
 library(readxl)
 
@@ -1216,78 +1216,3 @@ View(dados_ocean)
 View(dados_especies)
 
 View(dados_comprimentos)
-
-
-# ============================================================
-# FIM DA PREPARACAO DOS DADOS — OCEAN GUARD
-# ============================================================
-# Amostragens %>%
-#   select(ID_Amostragem, Data, Local) %>%
-#   print(n = 20)
-# 
-# str(Amostragens$Data)
-# str(dados_ocean$data_amostragem)
-# str(dados_especies$Data)
-# str(dados_comprimentos$Data)
-# 
-# dados_especies %>%
-#   select(ID_Amostragem, Nome_Especie, Data, Local) %>%
-#   head(15)
-# 
-# dados_comprimentos %>%
-#   select(ID_Amostragem, Nome_Especie, Data, Local) %>%
-#   head(15)
-# 
-# dados_ocean %>%
-#   count(Data, sort = TRUE)
-# 
-# 
-# diagnostico_fichas
-# Verificacao_Datas
-# head(dados_especies)
-# head(dados_comprimentos)
-# 
-# 
-# # Resumo das amostragens
-# Controlo_Qualidade %>%
-#   select(
-#     ID_Amostragem,
-#     Peso_Total_Capturas_Kg,
-#     Numero_Especies_Registado,
-#     Numero_Especies_Extraidas,
-#     Peso_Total_Especies_Kg,
-#     Estado_Peso,
-#     Estado_Especies
-#   ) %>%
-#   print(n = Inf)
-# 
-# Controlo_Medicoes %>%
-#   count(
-#     Estado_Medicoes,
-#     name = "Total"
-#   )
-# 
-# cat("Total de espécies:", nrow(Especies), "\n")
-# 
-# cat("Total de medições:", nrow(Comprimentos), "\n")
-# 
-# cat("Total de grupos biométricos:",
-#     nrow(Controlo_Medicoes), "\n")
-# 
-# 
-# 
-# Comprimentos %>%
-#   group_by(
-#     ID_Amostragem,
-#     Nome_Especie,
-#     Grupo_Comprimento
-#   ) %>%
-#   summarise(
-#     Total_Medicoes = n(),
-#     Exemplares = paste(
-#       sort(Numero_Exemplar),
-#       collapse = ", "
-#     ),
-#     .groups = "drop"
-#   ) %>%
-#   print(n = Inf)

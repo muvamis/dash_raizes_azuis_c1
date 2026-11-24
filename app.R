@@ -49,7 +49,73 @@ invisible(
 
 options(shiny.maxRequestSize = 30 * 1024^2)
 
+# ==========================================================
+# IDIOMAS — PORTUGUÊS / ENGLISH / FRANÇAIS
+# ==========================================================
 
+idiomas <- c(
+  "Português" = "pt",
+  "English" = "en",
+  "Français" = "fr"
+)
+
+traducoes <- list(
+  
+  pt = list(
+    dashboard = "Raízes Azuis",
+    visao_geral = "Visão Geral",
+    composicao_capturas = "Composição das Capturas",
+    analise_especies = "Análise das Espécies",
+    peso_total = "Peso Total",
+    especie = "Espécie",
+    local = "Local",
+    data = "Data",
+    todos = "Todos",
+    sem_dados = "Sem dados disponíveis"
+  ),
+  
+  en = list(
+    dashboard = "Blue Roots",
+    visao_geral = "Overview",
+    composicao_capturas = "Catch Composition",
+    analise_especies = "Species Analysis",
+    peso_total = "Total Weight",
+    especie = "Species",
+    local = "Location",
+    data = "Date",
+    todos = "All",
+    sem_dados = "No data available"
+  ),
+  
+  fr = list(
+    dashboard = "Racines Bleues",
+    visao_geral = "Vue Générale",
+    composicao_capturas = "Composition des Captures",
+    analise_especies = "Analyse des Espèces",
+    peso_total = "Poids Total",
+    especie = "Espèce",
+    local = "Localité",
+    data = "Date",
+    todos = "Tous",
+    sem_dados = "Aucune donnée disponible"
+  )
+  
+)
+
+tr <- function(chave, idioma = "pt") {
+  
+  if (is.null(idioma) || !idioma %in% names(traducoes)) {
+    idioma <- "pt"
+  }
+  
+  traducao <- traducoes[[idioma]][[chave]]
+  
+  if (is.null(traducao)) {
+    return(chave)
+  }
+  
+  traducao
+}
 # 3. CORES INSTITUCIONAIS
 # ==========================================================
 
@@ -82,10 +148,44 @@ tema_ocean <- bs_theme(
 ui <- navbarPage(
   title = "Raízes Azuis",
   
+  # SELETOR DE IDIOMAS
+  tags$li(
+    class = "idioma-selector",
+    selectInput(
+      inputId = "idioma_app",
+      label = NULL,
+      choices = c(
+        "🇲🇿 Português" = "pt",
+        "🇬🇧 English" = "en",
+        "🇫🇷 Français" = "fr"
+      ),
+      selected = "pt",
+      width = "150px"
+    )
+  ),
+  
   # ------------------ Estilo e Tema ------------------
   header = tags$head(
     tags$style(HTML("
+    
+/* SELETOR DE IDIOMAS */
+.idioma-selector {
+  float: right;
+  padding: 8px 15px;
+  list-style: none;
+}
 
+.idioma-selector .form-group {
+  margin-bottom: 0;
+}
+
+.idioma-selector select {
+  background-color: white;
+  color: #333333;
+  font-weight: bold;
+  border-radius: 6px;
+  border: none;
+}
       .navbar {
         background-color: #9442d4;
       }
